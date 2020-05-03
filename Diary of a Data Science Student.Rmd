@@ -1,0 +1,130 @@
+---
+title: "Diary of a Data Science Student: Cabin Fever During COVID-19"
+subtitle: "Stat231: Google Calendar Project"
+author: "Maggie Wu"
+date: "Due Tuesday, May 5 by 5:00 PM"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Overview
+
+This project will be undertaken individually.  While you can discuss general ideas with your peers, please do not share code directly with each other.  You can use other resources (including course materials, the internet, me, ...). 
+
+## How do I spend my time?
+
+One challenge of remote learning that many students have voiced is the difficulty of structuring our time in the absence of the usual structures in place when on campus. 
+
+How *are* we spending our time now?  In this project, we'll track how we're spending our time using Google Calendar, then import the calendar data into R to analyze and provide insights into how we're spending our time.
+
+The project aims to give you the opportunity to "play the whole [Data Science] game", including proposing a question of interest that can be addressed with data and partaking in *data collection*, as well as wrangling, visualizing, analyzing, and reflecting on the information gathered.  I hope an ancillary benefit is that it provides you with insights into how you're spending your time, and ideas for how better to manage your time.  (One tip: create a "weekly plan" at the beginning of each week, and document any changes as the week goes on.  See the "Video: Google Calendar Tips" on our Moodle course page.)
+
+Feel free to extend upon this basic question "how do I spend my time?" or explore a variation of it.  For instance, some other ideas include:
+
+- Document "intended time" doing things (e.g. studying, sleeping) versus "actual time" doing those things, and compare results
+- If you already use Google Calendar as a way to keep track of your schedule, you could compare how your time was spent at the beginning of the semester (on campus) to how your time is being spent at the end of the semester (since remote learning/COVID-19 isolation) 
+- Feeling artistic?  Feel free to go the *data art* route, and create visualizations using other mediums outside of R.  For examples: Dear Data (http://www.dear-data.com/theproject) and Environmental Graphiti (http://www.environmentalgraphiti.org/series).
+
+
+# Details
+
+## What to do
+
+1. Identify 2-4 primary questions of interest to you about how you spend your time.
+
+What is the ideal amount of work time per day? How much of my current "work time" is being wasted on Youtube?
+Ideal activity breakdown by day, track actual breakdown
+
+Parkinson's Law: Work expands to fill the time available for its completion. track allotted time for homework every day. Does it take longer or shorter to do work as a function of time allotted time? week 1: less time week 2: more time
+
+For my project, I would like to do a little experiment. Recently, I've been thinking about how to maximize my efficiency, and I stumbled across this saying, called Parkinson's Law: "work expands so as to fill the time available for its completion". In the past, I have observed that if I have a five-page essay due in a week, I tend to take the entire week to stare at a screen and ponder over every word. However, some other times, I have a paper of the same length in only half the time. In both situations, I get the assignment done with comparable grades.For this project, I want to set a certain block of time aside each day for writing my research paper that is coincidentally due on the same day as this project. Each day will have a different interval of time. I will measure whether the amount of work I get done in each session by keeping track of how many words I write and whether the writing is up to my caliber (1, 0). I will test whether the amount of work I get done varies by date or not. If it does not, my results support Parkinson's Law--the amount of work fills up for the time allotted. If it does vary and if there is a correlation, that means that the amount of work I do is related to the time I give myself.
+
+http://ggplot.yhathq.com/docs/scale_x_reverse.html
+2. Track your time in your Google Calendar application for approximately 7-10 days (a longer amount of time would be ideal, but we're pressed for time here!).  Fill in blocks of time and mark an entry with the activity you were performing: sleeping, studying, eating, exercising, socializing, etc.  How you fill in and categorize your blocks of time should depend on what your questions of interest are.  
+
+3. Export your calendar data to `.ics` file format (a universal calendar format used by several email and calendar programs).  This should take less than 5 minutes: https://support.google.com/calendar/answer/37111?hl=en.  
+
+4. Import the `.ics` file into R as a dataframe using the `ical` package (code to get you started is given below).
+
+5. Create relevant summaries and visualizations, wrangling the data as necessary along the way.  (Note: MUCH, MUCH LESS wrangling is expected here than in the Clearinghouse Challenge.  The `ical` package imports the calendar data into a nicely formatted dataframe, with variables for summary of the event, time start, time end, and description.)  Wrangling should *not* take a substantial amount of time. 
+
+6. What insights can you glean from how you're spending your time?  Write a 3-5 paragraph report introducing your questions of interest, explaining what you found, and reflecting on the answers to your questions posed.  
+
+7. Finally, write a short reflection (1-2 paragraphs) on the process.  As someone who provides data: What expectations do you have when you give your data (e.g. to Facebook, Google, MapMyRun, etc.)?  As someone who analyzes others' data: What legal and ethical responsibilities do you have?
+
+
+## Tips
+
+- Avoid creating calendar entries with a "repeat" schedule.  Unfortunately, calendar entries based on "repeat" schedules only appear once (the first occurence) in the R dataframe.  (Or, if you do use repeat events -- you would need to write an algorithm to code the recurring events.)
+- The color coding of events is also lost when exporting the data into the `.ics` file, so don't rely on color-coding your calendar to give you information.
+- There is a `googlecalendar` package under development that connects with Google's Calendar API that you may come across while searching online.  Although you are free to explore that API if you want, it is not necessary nor expected that you utilize it for this project.  The steps for importing your Google Calendar data into R are given below.  (I have not explored the package or API myself; it could be a dead end.)
+
+\newpage
+# Getting started . . .
+
+The code below can be used to import the `.ics` file into R as a dataframe.  Be sure to include the relevant path (where your `.ics` file is located) and update to your file name (with your email address).
+
+```{r, eval=FALSE}
+library(tidyverse)
+library(lubridate)
+library(ical)
+
+ogcal <- ical_parse_df(file = "mwu22@amherst.edu.ics") %>%
+  mutate(start_datetime = with_tz(start, tzone = "America/New_York")
+    , end_datetime = with_tz(end, tzone = "America/New_York")
+    , length_sec = end_datetime - start_datetime
+    , length_min = length_sec/60
+    , length_hrs = length_min/60
+    , date = floor_date(start_datetime, unit = "day")) 
+
+mycal <- ogcal%>%
+  filter(!(summary %in% c("CTL Student Fellows Meeting", "WSJ Wednesday", 
+                          "End-of-year CTL Fellows Celebration")),
+         start > '2020-04-18 13:00:00') %>%
+  mutate("daysleft" = as.numeric(str_extract(summary, "[0-9]$")),
+         "timewasted" = as.numeric(case_when(grepl("\\d+,", summary) ~ str_extract(summary, "\\d+"),
+                                            TRUE ~ "20000000")) 
+         ) %>%
+  select(-uid, -description, -last.modified, -status)
+
+str(mycal)
+```
+
+\newpage
+# Diary of a Data Science Student: Cabin Fever During COVID-19
+
+
+
+For your final submission, please delete the above instructions, and include all of your (reproducible) code and written responses below.
+
+```{r, include=FALSE}
+# the "include=FALSE" code chunk option suppresses the code and the output from this chunk from appearing in the knit file
+# please include your import of the data and any wrangling here
+```
+
+Then, intersperse your written report and any summary tables or visualizations here.
+
+```{r, echo=FALSE}
+# the "echo=FALSE" code chunk option suppresses the code from this chunk from appearing in the knit file, but the code will still evaluate and the output will show up in the knit file
+```
+
+
+\newpage
+# References
+
+- Thank you to Albert Kim (Smith College) and Johanna Hardin (Pomona College) for the Google Calendar project idea.  They credit Roger Peng's and Hilary Parker's **Not So Standard Deviations** podcast titled "Compromised Shoe Situation" (http://nssdeviations.com/size/5/?search=shoe), in which they discuss a data science design challenge on getting to work on time, for the inspiration.
+
+- Yupp, the title of this project is a play on the **Diary of a Wimpy Kid** book series.  We've been reading A LOT of these books in my house these days.  Many of the titles could be equally applicable here:
+- Diary of a [Data Science Student]: Cabin Fever
+- Diary of a [Data Science Student]: The Last Straw
+- Diary of a [Data Science Student]: Dog Days
+- Diary of a [Data Science Student]: The Ugly Truth
+- Diary of a [Data Science Student]: Hard Luck
+- Diary of a [Data Science Student]: The Long Haul
+- Diary of a [Data Science Student]: Old School 
+- The [Data Science Student] *Do-It-Yourself* Book
+
+Feel free to update your project title if one resonates with you more than another!
