@@ -44,7 +44,8 @@ majority of the time that I get distracted is from the Internet, so my
 search history was an accurate reflection of all the time that I wasted.
 The *timewasted* variable tracks the amount of time per work session
 that was spent off task. I also kept track of where I was working
-(*studyarea*) and the assignment type (*worktype*).
+(*studyarea*), the assignment type (*worktype*), and the days until the
+assignment’s deadline (*daysleft*).
 
 After collecting my data, I downloaded my calendar as a .ics file and
 began wrangling. There are two datasets: productivitydata, which
@@ -52,71 +53,7 @@ contains the variables related to my work sessions, and the more general
 activitydata, which contains all the activities that I have done in
 quarantine.
 
-Here is a view of my activity data set:
-
-    head(allactivities)
-
-    ##   summary               start                 end      start_datetime
-    ## 1    Free 2020-04-18 21:00:00 2020-04-19 01:00:00 2020-04-18 21:00:00
-    ## 2  Violin 2020-04-18 20:00:00 2020-04-18 21:00:00 2020-04-18 20:00:00
-    ## 3    Free 2020-04-19 13:00:00 2020-04-19 15:00:00 2020-04-19 13:00:00
-    ## 4    Work 2020-04-19 15:00:00 2020-04-19 16:30:00 2020-04-19 15:00:00
-    ## 5    Free 2020-04-19 16:30:00 2020-04-19 17:00:00 2020-04-19 16:30:00
-    ## 6    Free 2020-04-19 21:30:00 2020-04-20 00:00:00 2020-04-19 21:30:00
-    ##          end_datetime length_sec length_min length_hrs       date daysleft
-    ## 1 2020-04-19 01:00:00 14400 secs   240 secs   4.0 secs 2020-04-18       NA
-    ## 2 2020-04-18 21:00:00  3600 secs    60 secs   1.0 secs 2020-04-18       NA
-    ## 3 2020-04-19 15:00:00  7200 secs   120 secs   2.0 secs 2020-04-19       NA
-    ## 4 2020-04-19 16:30:00  5400 secs    90 secs   1.5 secs 2020-04-19       NA
-    ## 5 2020-04-19 17:00:00  1800 secs    30 secs   0.5 secs 2020-04-19       NA
-    ## 6 2020-04-20 00:00:00  9000 secs   150 secs   2.5 secs 2020-04-19       NA
-    ##   timewasted allottedtime activity hours
-    ## 1      2e+07          240     Free   4.0
-    ## 2      2e+07           60   Violin   1.0
-    ## 3      2e+07          120     Free   2.0
-    ## 4      2e+07           90     Work   1.5
-    ## 5      2e+07           30     Free   0.5
-    ## 6      2e+07          150     Free   2.5
-
 Here is a view of my productivity data set:
-
-    head(productivitydata)
-
-    ##                                        summary               start
-    ## 1 0, Actual Linear Algebra, Bed, 4 problems, 2 2020-04-19 01:00:00
-    ## 2                    60, YoutubeLinear, Bed, 5 2020-04-22 23:00:00
-    ## 3                   180, YoutubeEssay, Bed, 13 2020-04-23 00:00:00
-    ## 4                    60, YoutubeEssay, Desk, 3 2020-04-24 00:00:00
-    ## 5                     60, YoutubeEssay, Bed, 1 2020-04-26 02:00:00
-    ## 6                    120, YoutubeEssay, Bed, 8 2020-04-28 01:00:00
-    ##                   end      start_datetime        end_datetime length_sec
-    ## 1 2020-04-19 03:00:00 2020-04-19 01:00:00 2020-04-19 03:00:00  7200 secs
-    ## 2 2020-04-23 00:00:00 2020-04-22 23:00:00 2020-04-23 00:00:00  3600 secs
-    ## 3 2020-04-23 03:00:00 2020-04-23 00:00:00 2020-04-23 03:00:00 10800 secs
-    ## 4 2020-04-24 01:00:00 2020-04-24 00:00:00 2020-04-24 01:00:00  3600 secs
-    ## 5 2020-04-26 03:00:00 2020-04-26 02:00:00 2020-04-26 03:00:00  3600 secs
-    ## 6 2020-04-28 03:00:00 2020-04-28 01:00:00 2020-04-28 03:00:00  7200 secs
-    ##   length_min length_hrs       date daysleft timewasted allottedtime
-    ## 1   120 secs     2 secs 2020-04-19        2          0          120
-    ## 2    60 secs     1 secs 2020-04-22        5         60           60
-    ## 3   180 secs     3 secs 2020-04-23       13        180          180
-    ## 4    60 secs     1 secs 2020-04-24        3         60           60
-    ## 5    60 secs     1 secs 2020-04-26        1         60           60
-    ## 6   120 secs     2 secs 2020-04-28        8        120          120
-    ##   studyarea timewastedproportion worktype timeproductive
-    ## 1       Bed                    0     Math            120
-    ## 2       Bed                    1     Math              0
-    ## 3       Bed                    1  Writing              0
-    ## 4      Desk                    1  Writing              0
-    ## 5       Bed                    1  Writing              0
-    ## 6       Bed                    1  Writing              0
-    ##   timeworkedproportion
-    ## 1                    1
-    ## 2                    0
-    ## 3                    0
-    ## 4                    0
-    ## 5                    0
-    ## 6                    0
 
 Results
 -------
@@ -158,7 +95,7 @@ effect on my productivity level. The violin plot below depicts this. The
 bands represent the quartiles while the width of the plot represents the
 probability density of the data at that value.
 
-![](index_files/figure-markdown_strict/unnamed-chunk-7-1.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-5-1.png)
 
 There is a lot of variation in both categories, but more in bed than in
 desk. Desk minutes wasted has an outlier, but most of the data is lower,
@@ -172,7 +109,7 @@ I give less time to work done in my bed, wouldn’t there naturally be
 less minutes wasted? To control for this, I compared the proportions of
 time wasted out of the total allotted work time.
 
-![](index_files/figure-markdown_strict/unnamed-chunk-8-1.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-6-1.png)
 
 Here, we see that the distributions of proportions of work time wasted
 are very similar, regardless of the area worked. Therefore, we can
@@ -185,7 +122,7 @@ wasted for writing assignments but not a lot for math assignments.
 Additionally, there seem to be less minutes wasted overall for math than
 for writing assignments. However, let’s control for proportions.
 
-![](index_files/figure-markdown_strict/unnamed-chunk-9-1.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-7-1.png)
 
 After controlling for proportions, we see that there seems to be some
 difference in time wasted by assignment type. Writing assignments, while
@@ -195,7 +132,7 @@ write! While math does have at least some of its probability
 distribution fall in the higher end, this may be due to the outlier at
 1.00.
 
-![](index_files/figure-markdown_strict/unnamed-chunk-10-1.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-8-1.png)
 
 Let’s factor out the outlier at 1.00 for math assignments. Below, we see
 that the probability density of the data for math does not extend above
@@ -204,32 +141,12 @@ that the probability density of the data for math does not extend above
 While there is some overlap, I am clearly wasting more time when writing
 than doing math.
 
-    #filter out the outlier for math
-    noutliers <- productivitydata %>% filter(summary != "60, YoutubeLinear, Bed, 5")
-    violinplot5 <- ggplot(noutliers, aes(x = worktype, y = timewastedproportion, fill = worktype)) +
-      geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
-      geom_jitter(width = 0.05)+
-      scale_fill_manual(values = pal)+
-      labs(title = "Proportion of Allotted Work Time That Was Wasted by Assignment Type",
-           y = "minutes wasted")
-    violinplot5
-
-![](index_files/figure-markdown_strict/unnamed-chunk-11-1.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-9-1.png)
 
 Inversely, below is a graph of the proportion of time used by work type.
 We see comparable results to above.
 
-    pal <- wes_palette("Darjeeling1", n=2, type = "discrete")
-
-    violinplot7 <- ggplot(noutliers, aes(x = worktype, y = timeworkedproportion, fill = worktype)) +
-      geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + 
-      geom_jitter(width = 0.05)+
-      scale_fill_manual(values = pal)+
-      labs(title = "Allotted Work Time That Was Used by Assignment Type",
-           y = "minutes wasted")
-    violinplot7
-
-![](index_files/figure-markdown_strict/unnamed-chunk-12-1.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-10-1.png)
 
 Thirdly, we have a graph that depicts my natural work flow. After
 averaging over the observations at each day until deadline, the graph
@@ -240,22 +157,7 @@ because the graph is predicting based on the observations of allotted
 time and the amount of time that was productive separately, the shaded
 area is not an exact replica of the proportions of time used and wasted.
 
-    #linegraph
-    #manually enter missing day values
-    #plot x = daysuntildeadline, y = proportionwasted
-    #second layer=actual time given
-    linegraph1 <- ggplot(productivitydata, aes(x = daysleft)) + 
-      #geom_smooth(aes(y = allottedtime), se = FALSE, fullrange = TRUE) +
-      scale_x_reverse() +
-      geom_ribbon(aes(ymin = 0,ymax = predict(loess(allottedtime ~ daysleft))),
-                     alpha = 0.4, fill = "#68cae3")+
-      #geom_smooth(aes(y = timeproductive), se = FALSE, fullrange = TRUE) +
-      geom_ribbon(aes(ymin = 0,ymax = predict(loess(timeproductive ~ daysleft))),
-                     alpha = 0.95, fill = "#e67d60")
-      
-    linegraph1
-
-![](index_files/figure-markdown_strict/unnamed-chunk-13-1.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-11-1.png)
 
 We see that in general, as time gets closer to the due date, I am using
 more of my time. We have a correlation between the time worked and the
@@ -276,3 +178,37 @@ days prior to a deadline, as I am doing right now. Overall, I see that I
 overestimate the amount of time it takes to accomplish an assignment, as
 I am giving myself a lot more time than necessary, as I was able to
 finish all the assignments in this analysis on time.
+
+Reflection
+----------
+
+My analysis generated several conclusions: first, without adjusting for
+other variables, where I work does not affect my productivity. However,
+different types of assignments have different levels of productivity: I
+am way more productive with my time when I am doing math homework versus
+writing an essay. I am not very surprised, as I did not particularly
+enjoy the essays I wrote during this period while math was a lot more
+interesting. Additionally, I concluded that I overestimate the amount of
+time it takes to accomplish my work, as I am always wasting some time,
+even on the day of the deadline. In the future, I am going to start
+giving myself more time to do an assignment closer to a deadline, as I
+am more naturally inclined to work closer to a deadline. According to
+the model, only around 10 days do I begin to use the time I give myself
+to work. Otherwise, I spend all of my allotted time on the Internet.
+Alternatively, I could try to fix my procrastination habit, but as long
+as my ability to complete work is not seriously affected, I like my
+current work flow. Finally, in quarantine, I have a lot of free time in
+comparison to any other activity.
+
+This project had several limitations. Most fatally, I did not have
+enough productivity data to make solid conclusions–I only had 16
+observations of work sessions. With a small sample size and too much
+variation, results were not very significant. If I could redo this
+project, I would keep track of more assignments over a longer period of
+time. Furthermore, this study can be expanded by predicting the
+proportion of allotted time from both the assignment type and the time
+until deadline. A multivariate model is needed to see the true
+interactions between these variables. Lastly, when I measured the time I
+was working, I did not consider the quality of work being produced. An
+interesting direction to explore in the future is how the quality of
+work changes depending on the work flow.

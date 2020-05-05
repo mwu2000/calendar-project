@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 I collected data by logging in my daily schedule into Google Calendar. Every morning for 13 days, I logged in my day's planned activities and stuck to the schedule (for the most part). So, each day I planned set times to do my writing or math assignments or sometimes both. In the dataset, the *allottedtime* variable tracks the amount of time I gave myself each day. I also logged what I was doing in the rest of the day.
 
-At the end of each work session, I looked at my search history on Google Chrome and calculated the total amount of time that I was on other sites not related to my work, such as Youtube or social media. I put this into my google calendar as part of the summary. When I'm working, the majority of the time that I get distracted is from the Internet, so my search history was an accurate reflection of all the time that I wasted. The *timewasted* variable tracks the amount of time per work session that was spent off task. I also kept track of where I was working (*studyarea*) and the assignment type (*worktype*).
+At the end of each work session, I looked at my search history on Google Chrome and calculated the total amount of time that I was on other sites not related to my work, such as Youtube or social media. I put this into my google calendar as part of the summary. When I'm working, the majority of the time that I get distracted is from the Internet, so my search history was an accurate reflection of all the time that I wasted. The *timewasted* variable tracks the amount of time per work session that was spent off task. I also kept track of where I was working (*studyarea*), the assignment type (*worktype*), and the days until the assignment's deadline (*daysleft*).
 
 After collecting my data, I downloaded my calendar as a .ics file and began wrangling. There are two datasets: productivitydata, which contains the variables related to my work sessions, and the more general activitydata, which contains all the activities that I have done in quarantine.
 
@@ -214,7 +214,7 @@ violinplot4
 
 Let's factor out the outlier at 1.00 for math assignments. Below, we see that the probability density of the data for math does not extend above 0.70 and that the fattest part of the probability density is around 0.1275. However, for writing, the distribution is never lower than 0.50. While there is some overlap, I am clearly wasting more time when writing than doing math.
 
-```{r}
+```{r, echo = FALSE}
 #filter out the outlier for math
 noutliers <- productivitydata %>% filter(summary != "60, YoutubeLinear, Bed, 5")
 violinplot5 <- ggplot(noutliers, aes(x = worktype, y = timewastedproportion, fill = worktype)) +
@@ -228,7 +228,7 @@ violinplot5
 
 Inversely, below is a graph of the proportion of time used by work type. We see comparable results to above.
 
-```{r}
+```{r, echo = FALSE}
 pal <- wes_palette("Darjeeling1", n=2, type = "discrete")
 
 violinplot7 <- ggplot(noutliers, aes(x = worktype, y = timeworkedproportion, fill = worktype)) +
@@ -242,7 +242,7 @@ violinplot7
 
 Thirdly, we have a graph that depicts my natural work flow. After averaging over the observations at each day until deadline, the graph shows the amount of time that I've given myself for an assignment and the amounnt of time that is actually used. The amount of time that is used is in red while the amount of time wasted is in blue. Of course, because the graph is predicting based on the observations of allotted time and the amount of time that was productive separately, the shaded area is not an exact replica of the proportions of time used and wasted.
 
-```{r}
+```{r, echo = FALSE}
 #linegraph
 #manually enter missing day values
 #plot x = daysuntildeadline, y = proportionwasted
@@ -251,10 +251,19 @@ linegraph1 <- ggplot(productivitydata, aes(x = daysleft)) +
   #geom_smooth(aes(y = allottedtime), se = FALSE, fullrange = TRUE) +
   scale_x_reverse() +
   geom_ribbon(aes(ymin = 0,ymax = predict(loess(allottedtime ~ daysleft))),
-                 alpha = 0.4, fill = "#68cae3")+
+                 alpha = 0.4, fill = "#68cae3", color = "red")+
   #geom_smooth(aes(y = timeproductive), se = FALSE, fullrange = TRUE) +
   geom_ribbon(aes(ymin = 0,ymax = predict(loess(timeproductive ~ daysleft))),
-                 alpha = 0.95, fill = "#e67d60")
+                 alpha = 0.95, fill = "#e67d60", color = "white")+
+  geom_text(x = -10, y = 55,
+            , label = paste("this is the amount of work time that was wasted")
+            , color = "#6072e6") +
+  geom_text(x=-3.5, y =20,
+            label = paste("this is the amount of work time that was used"),
+            color = "#f5eae6") +
+  labs(x = "Days Until Assignment Deadline",
+       y = "Allotted Time in Minutes",
+       title = "Work Flow")
   
 linegraph1
 ```
@@ -268,3 +277,14 @@ cor(productivitydata$daysleft, productivitydata$timeworkedproportion)
 
 
 This graph is also useful because it shows that at the beginning, I am giving myself almost the same amount of work time as the end. Around 5 days, I give myself less work time, even though that is when the rate of work increases. However, if I want to mirror my natural work flow, I should begin to give myself less time prior to ten days until a deadline, as most of that is wasted. I should give myself enough time 5 days prior to a deadline, as I am doing right now. Overall, I see that I overestimate the amount of time it takes to accomplish an assignment, as I am giving myself a lot more time than necessary, as I was able to finish all the assignments in this analysis on time.
+
+## Reflection
+
+My analysis generated several conclusions: first, without adjusting for other variables, where I work does not affect my productivity. However, different types of assignments have different levels of productivity: I am way more productive with my time when I am doing math homework versus writing an essay. I am not very surprised, as I did not particularly enjoy the essays I wrote during this period while math was a lot more interesting. Additionally, I concluded that I overestimate the amount of time it takes to accomplish my work, as I am always wasting some time, even on the day of the deadline. In the future, I am going to start giving myself more time to do an assignment closer to a deadline, as I am more naturally inclined to work closer to a deadline. According to the model, only around 10 days do I begin to use the time I give myself to work. Otherwise, I spend all of my allotted time on the Internet. Alternatively, I could try to fix my procrastination habit, but as long as my ability to complete work is not seriously affected, I like my current work flow. Finally, in quarantine, I have a lot of free time in comparison to any other activity.
+
+
+This project had several limitations. Most fatally, I did not have enough productivity data to make solid conclusions--I only had 16 observations of work sessions. With a small sample size and too much variation, results were not very significant. If I could redo this project, I would keep track of more assignments over a longer period of time. Furthermore, this study can be expanded by predicting the proportion of allotted time from both the assignment type and the time until deadline. A multivariate model is needed to see the true interactions between these variables. Lastly, when I measured the time I was working, I did not consider the quality of work being produced. An interesting direction to explore in the future is how the quality of work changes depending on the work flow.
+
+
+
+
