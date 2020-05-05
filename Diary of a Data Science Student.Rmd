@@ -42,7 +42,7 @@ Parkinson's Law: Work expands to fill the time available for its completion. tra
 
 For my project, I would like to do a little experiment. Recently, I've been thinking about how to maximize my efficiency, and I stumbled across this saying, called Parkinson's Law: "work expands so as to fill the time available for its completion". In the past, I have observed that if I have a five-page essay due in a week, I tend to take the entire week to stare at a screen and ponder over every word. However, some other times, I have a paper of the same length in only half the time. In both situations, I get the assignment done with comparable grades.For this project, I want to set a certain block of time aside each day for writing my research paper that is coincidentally due on the same day as this project. Each day will have a different interval of time. I will measure whether the amount of work I get done in each session by keeping track of how many words I write and whether the writing is up to my caliber (1, 0). I will test whether the amount of work I get done varies by date or not. If it does not, my results support Parkinson's Law--the amount of work fills up for the time allotted. If it does vary and if there is a correlation, that means that the amount of work I do is related to the time I give myself.
 
-http://ggplot.yhathq.com/docs/scale_x_reverse.html
+
 2. Track your time in your Google Calendar application for approximately 7-10 days (a longer amount of time would be ideal, but we're pressed for time here!).  Fill in blocks of time and mark an entry with the activity you were performing: sleeping, studying, eating, exercising, socializing, etc.  How you fill in and categorize your blocks of time should depend on what your questions of interest are.  
 
 3. Export your calendar data to `.ics` file format (a universal calendar format used by several email and calendar programs).  This should take less than 5 minutes: https://support.google.com/calendar/answer/37111?hl=en.  
@@ -67,10 +67,12 @@ http://ggplot.yhathq.com/docs/scale_x_reverse.html
 
 The code below can be used to import the `.ics` file into R as a dataframe.  Be sure to include the relevant path (where your `.ics` file is located) and update to your file name (with your email address).
 
-```{r, eval=FALSE}
+```{r}
+#eval = FALSE
 library(tidyverse)
 library(lubridate)
 library(ical)
+library(gganimate)
 
 ogcal <- ical_parse_df(file = "mwu22@amherst.edu.ics") %>%
   mutate(start_datetime = with_tz(start, tzone = "America/New_York")
@@ -86,12 +88,124 @@ mycal <- ogcal%>%
          start > '2020-04-18 13:00:00') %>%
   mutate("daysleft" = as.numeric(str_extract(summary, "[0-9]$")),
          "timewasted" = as.numeric(case_when(grepl("\\d+,", summary) ~ str_extract(summary, "\\d+"),
-                                            TRUE ~ "20000000")) 
+                                            TRUE ~ "20000000")),
+         "workmin" = as.numeric(length_min)
          ) %>%
   select(-uid, -description, -last.modified, -status)
 
 str(mycal)
 ```
+
+```{r}
+library(wesanderson)
+pal <- wes_palette("GrandBudapest2", n=4, type = "discrete")
+
+#Plot 1: violinplot of how much time is wasted in bed versus at the desk
+
+productivitydata <- mycal %>% filter(timewasted != 20000000) %>%
+  mutate("studyarea" = case_when(grepl("Bed", summary, ignore.case = TRUE) ~  "Bed",
+                                     grepl("desk", summary, ignore.case = TRUE) ~  "Desk",
+                                     TRUE ~ "whatever"),
+                                     "timewastedproportion" = timewasted/workmin,
+                                     "worktype" = case_when(grepl("Linear", summary, ignore.case = TRUE) ~ "Math",
+                                                            grepl("Essay", summary, ignore.case = TRUE) ~ "Writing",
+                                                            TRUE ~ "whatever"))
+
+violinplot <- ggplot(productivitydata, aes(x = studyarea, y = timewasted, fill = studyarea)) +
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
+  geom_jitter(width = 0.05) +
+  scale_fill_manual(values = pal)
+  labs(title = "Allotted Work Time That was Wasted by Study Area",
+       y = "minutes wasted")
+violinplot
+```
+
+```{r}
+#plot2, control for amount of time spent
+violinplot2 <- ggplot(productivitydata, aes(x = studyarea, y = timewastedproportion, fill = studyarea)) +
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
+  geom_jitter(width = 0.05) +
+  scale_fill_manual(values = pal)+
+  labs(title = "Proportion of Allotted Work Time that was Wasted by Study Area",
+       y = "time wasted/Time Allotted")
+violinplot2
+```
+
+
+```{r}
+pal <- wes_palette("Moonrise3", n=4, type = "discrete")
+#plot3, math versus writing
+violinplot3 <- ggplot(productivitydata, aes(x = worktype, y = timewasted, fill = worktype)) +
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
+  geom_jitter(width = 0.05)+
+  scale_fill_manual(values = pal)+
+  labs(title = "Allotted Work Time That Was Wasted by Assignment Type",
+       y = "minutes wasted")
+violinplot3
+```
+
+```{r}
+#plot4, math versus writing controlling for differences in allotted time
+violinplot4 <- ggplot(productivitydata, aes(x = worktype, y = timewastedproportion, fill = worktype)) +
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
+  geom_jitter(width = 0.05)+
+  scale_fill_manual(values = pal)+
+  labs(title = "Allotted Work Time That Was Wasted by Assignment Type",
+       y = "minutes wasted")
+violinplot4
+
+#filter out the outlier for math
+noutliers <- productivitydata %>% filter(summary != "60, YoutubeLinear, Bed, 5")
+violinplot4 <- ggplot(noutliers, aes(x = worktype, y = timewastedproportion, fill = worktype)) +
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
+  geom_jitter(width = 0.05)+
+  scale_fill_manual(values = pal)+
+  labs(title = "Allotted Work Time That Was Wasted by Assignment Type",
+       y = "minutes wasted")
+violinplot4
+```
+```{r}
+#manually entering some missing values
+productivitydata$daysleft[14] <- 0
+productivitydata$daysleft[16] <- 4
+productivitydata$daysleft[3] <- 13
+productivitydata <- productivitydata %>% mutate("timeproductive" = (workmin - timewasted))
+
+
+#linegraph
+#manually enter missing day values
+#plot x = daysuntildeadline, y = proportionwasted
+#second layer=actual time given
+linegraph1 <- ggplot(productivitydata, aes(x = daysleft)) + 
+  geom_smooth(aes(y = workmin), se = FALSE, fullrange = TRUE) +
+  scale_x_reverse() +
+  geom_ribbon(aes(ymin = 0,ymax = predict(loess(workmin ~ daysleft))),
+                 alpha = 0.4, fill = "#F5CDB4")+
+  geom_smooth(aes(y = timeproductive), se = FALSE, fullrange = TRUE) +
+  geom_ribbon(aes(ymin = 0,ymax = predict(loess(timeproductive ~ daysleft))),
+                 alpha = 1.0, fill = "#74A089")
+linegraph1
+```
+
+```{r}
+#Our data has too much variation and too little observations. Let's simulate some more results!
+distributionworkmin <- ggplot(productivitydata, aes(x = workmin)) + geom_bar()
+distributionworkmin
+```
+
+```{r}
+#faceted by work type
+linegraph2 <- ggplot(productivitydata, aes(x = daysleft)) + 
+  geom_smooth(aes(y = workmin), se = FALSE, fullrange = TRUE) +
+  scale_x_reverse() +
+  geom_ribbon(aes(ymin = 0,ymax = predict(loess(workmin ~ daysleft))),
+                 alpha = 0.4, fill = "#F5CDB4")+
+  geom_smooth(aes(y = timeproductive), se = FALSE, fullrange = TRUE) +
+  geom_ribbon(aes(ymin = 0,ymax = predict(loess(timeproductive ~ daysleft))),
+                 alpha = 1.0, fill = "#74A089")
+linegraph2
+```
+
 
 \newpage
 # Diary of a Data Science Student: Cabin Fever During COVID-19
