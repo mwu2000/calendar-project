@@ -73,10 +73,7 @@ allactivities <- mycal %>%
          "hours" = as.numeric(length_hrs))
 ```
 
-Here is a view of my activity data set:
-```{r}
-head(allactivities)
-```
+
 
 Here is a view of my productivity data set:
 
@@ -100,9 +97,6 @@ productivitydata <- productivitydata %>%
   mutate("timeworkedproportion" = timeproductive/allottedtime)
 ```
 
-```{r}
-head(productivitydata)
-```
 
 
 ## Results
