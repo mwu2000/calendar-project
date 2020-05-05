@@ -1,24 +1,389 @@
-You can include section headers like this
-=========================================
 
-Or section subheaders like this
--------------------------------
 
-### How do I spend my time?
+Overview
+========
 
-Motivation + primary questions of interest
+This project will be undertaken individually. While you can discuss
+general ideas with your peers, please do not share code directly with
+each other. You can use other resources (including course materials, the
+internet, me, …).
 
-blah blah blah
+How do I spend my time?
+-----------------------
 
-I can include an image (not created in R) like this:
+One challenge of remote learning that many students have voiced is the
+difficulty of structuring our time in the absence of the usual
+structures in place when on campus.
 
-![cute puppy](./img/cute_puppy.png)
+How *are* we spending our time now? In this project, we’ll track how
+we’re spending our time using Google Calendar, then import the calendar
+data into R to analyze and provide insights into how we’re spending our
+time.
 
-Create a “img” folder within your calendar-project repo and store the
-image files there.
+The project aims to give you the opportunity to “play the whole \[Data
+Science\] game”, including proposing a question of interest that can be
+addressed with data and partaking in *data collection*, as well as
+wrangling, visualizing, analyzing, and reflecting on the information
+gathered. I hope an ancillary benefit is that it provides you with
+insights into how you’re spending your time, and ideas for how better to
+manage your time. (One tip: create a “weekly plan” at the beginning of
+each week, and document any changes as the week goes on. See the “Video:
+Google Calendar Tips” on our Moodle course page.)
 
-Data collection
-===============
+Feel free to extend upon this basic question “how do I spend my time?”
+or explore a variation of it. For instance, some other ideas include:
+
+-   Document “intended time” doing things (e.g. studying, sleeping)
+    versus “actual time” doing those things, and compare results
+-   If you already use Google Calendar as a way to keep track of your
+    schedule, you could compare how your time was spent at the beginning
+    of the semester (on campus) to how your time is being spent at the
+    end of the semester (since remote learning/COVID-19 isolation)
+-   Feeling artistic? Feel free to go the *data art* route, and create
+    visualizations using other mediums outside of R. For examples: Dear
+    Data
+    (<a href="http://www.dear-data.com/theproject" class="uri">http://www.dear-data.com/theproject</a>)
+    and Environmental Graphiti
+    (<a href="http://www.environmentalgraphiti.org/series" class="uri">http://www.environmentalgraphiti.org/series</a>).
+
+Details
+=======
+
+What to do
+----------
+
+1.  Identify 2-4 primary questions of interest to you about how you
+    spend your time.
+
+What is the ideal amount of work time per day? How much of my current
+“work time” is being wasted on Youtube? Ideal activity breakdown by day,
+track actual breakdown
+
+Parkinson’s Law: Work expands to fill the time available for its
+completion. track allotted time for homework every day. Does it take
+longer or shorter to do work as a function of time allotted time? week
+1: less time week 2: more time
+
+For my project, I would like to do a little experiment. Recently, I’ve
+been thinking about how to maximize my efficiency, and I stumbled across
+this saying, called Parkinson’s Law: “work expands so as to fill the
+time available for its completion”. In the past, I have observed that if
+I have a five-page essay due in a week, I tend to take the entire week
+to stare at a screen and ponder over every word. However, some other
+times, I have a paper of the same length in only half the time. In both
+situations, I get the assignment done with comparable grades.For this
+project, I want to set a certain block of time aside each day for
+writing my research paper that is coincidentally due on the same day as
+this project. Each day will have a different interval of time. I will
+measure whether the amount of work I get done in each session by keeping
+track of how many words I write and whether the writing is up to my
+caliber (1, 0). I will test whether the amount of work I get done varies
+by date or not. If it does not, my results support Parkinson’s Law–the
+amount of work fills up for the time allotted. If it does vary and if
+there is a correlation, that means that the amount of work I do is
+related to the time I give myself.
+
+1.  Track your time in your Google Calendar application for
+    approximately 7-10 days (a longer amount of time would be ideal, but
+    we’re pressed for time here!). Fill in blocks of time and mark an
+    entry with the activity you were performing: sleeping, studying,
+    eating, exercising, socializing, etc. How you fill in and categorize
+    your blocks of time should depend on what your questions of interest
+    are.
+
+2.  Export your calendar data to `.ics` file format (a universal
+    calendar format used by several email and calendar programs). This
+    should take less than 5 minutes:
+    <a href="https://support.google.com/calendar/answer/37111?hl=en" class="uri">https://support.google.com/calendar/answer/37111?hl=en</a>.
+
+3.  Import the `.ics` file into R as a dataframe using the `ical`
+    package (code to get you started is given below).
+
+4.  Create relevant summaries and visualizations, wrangling the data as
+    necessary along the way. (Note: MUCH, MUCH LESS wrangling is
+    expected here than in the Clearinghouse Challenge. The `ical`
+    package imports the calendar data into a nicely formatted dataframe,
+    with variables for summary of the event, time start, time end, and
+    description.) Wrangling should *not* take a substantial amount of
+    time.
+
+5.  What insights can you glean from how you’re spending your time?
+    Write a 3-5 paragraph report introducing your questions of interest,
+    explaining what you found, and reflecting on the answers to your
+    questions posed.
+
+6.  Finally, write a short reflection (1-2 paragraphs) on the process.
+    As someone who provides data: What expectations do you have when you
+    give your data (e.g. to Facebook, Google, MapMyRun, etc.)? As
+    someone who analyzes others’ data: What legal and ethical
+    responsibilities do you have?
+
+Tips
+----
+
+-   Avoid creating calendar entries with a “repeat” schedule.
+    Unfortunately, calendar entries based on “repeat” schedules only
+    appear once (the first occurence) in the R dataframe. (Or, if you do
+    use repeat events – you would need to write an algorithm to code the
+    recurring events.)
+-   The color coding of events is also lost when exporting the data into
+    the `.ics` file, so don’t rely on color-coding your calendar to give
+    you information.
+-   There is a `googlecalendar` package under development that connects
+    with Google’s Calendar API that you may come across while searching
+    online. Although you are free to explore that API if you want, it is
+    not necessary nor expected that you utilize it for this project. The
+    steps for importing your Google Calendar data into R are given
+    below. (I have not explored the package or API myself; it could be a
+    dead end.)
+
+Getting started . . .
+=====================
+
+The code below can be used to import the `.ics` file into R as a
+dataframe. Be sure to include the relevant path (where your `.ics` file
+is located) and update to your file name (with your email address).
+
+    #eval = FALSE
+    library(tidyverse)
+
+    ## ── Attaching packages ───────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+
+    ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
+    ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
+    ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
+    ## ✔ readr   1.3.1     ✔ forcats 0.4.0
+
+    ## ── Conflicts ──────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ✖ dplyr::filter() masks stats::filter()
+    ## ✖ dplyr::lag()    masks stats::lag()
+
+    library(lubridate)
+
+    ## 
+    ## Attaching package: 'lubridate'
+
+    ## The following object is masked from 'package:base':
+    ## 
+    ##     date
+
+    library(ical)
+    library(gganimate)
+
+    ogcal <- ical_parse_df(file = "mwu22@amherst.edu.ics") %>%
+      mutate(start_datetime = with_tz(start, tzone = "America/New_York")
+        , end_datetime = with_tz(end, tzone = "America/New_York")
+        , length_sec = end_datetime - start_datetime
+        , length_min = length_sec/60
+        , length_hrs = length_min/60
+        , date = floor_date(start_datetime, unit = "day")) 
+
+    mycal <- ogcal%>%
+      filter(!(summary %in% c("CTL Student Fellows Meeting", "WSJ Wednesday", 
+                              "End-of-year CTL Fellows Celebration")),
+             start > '2020-04-18 13:00:00') %>%
+      mutate("daysleft" = as.numeric(str_extract(summary, "[0-9]$")),
+             "timewasted" = as.numeric(case_when(grepl("\\d+,", summary) ~ str_extract(summary, "\\d+"),
+                                                TRUE ~ "20000000")),
+             "allottedtime" = as.numeric(length_min)
+             ) %>%
+      select(-uid, -description, -last.modified, -status)
+
+    str(mycal)
+
+    ## 'data.frame':    117 obs. of  12 variables:
+    ##  $ summary       : Factor w/ 87 levels " 216, Actual Essay, Desk, 313 Words, Quality 3, 2",..: 49 79 49 80 49 49 19 79 23 49 ...
+    ##  $ start         : POSIXct, format: "2020-04-18 21:00:00" "2020-04-18 20:00:00" ...
+    ##  $ end           : POSIXct, format: "2020-04-19 01:00:00" "2020-04-18 21:00:00" ...
+    ##  $ start_datetime: POSIXct, format: "2020-04-18 21:00:00" "2020-04-18 20:00:00" ...
+    ##  $ end_datetime  : POSIXct, format: "2020-04-19 01:00:00" "2020-04-18 21:00:00" ...
+    ##  $ length_sec    : 'difftime' num  14400 3600 7200 5400 ...
+    ##   ..- attr(*, "units")= chr "secs"
+    ##  $ length_min    : 'difftime' num  240 60 120 90 ...
+    ##   ..- attr(*, "units")= chr "secs"
+    ##  $ length_hrs    : 'difftime' num  4 1 2 1.5 ...
+    ##   ..- attr(*, "units")= chr "secs"
+    ##  $ date          : POSIXct, format: "2020-04-18" "2020-04-18" ...
+    ##  $ daysleft      : num  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ timewasted    : num  2e+07 2e+07 2e+07 2e+07 2e+07 2e+07 2e+07 2e+07 2e+07 2e+07 ...
+    ##  $ allottedtime  : num  240 60 120 90 30 150 30 90 150 60 ...
+
+    library(wesanderson)
+    pal <- wes_palette("GrandBudapest2", n=4, type = "discrete")
+
+    #Plot 1: violinplot of how much time is wasted in bed versus at the desk
+
+    productivitydata <- mycal %>% filter(timewasted != 20000000) %>%
+      mutate("studyarea" = case_when(grepl("Bed", summary, ignore.case = TRUE) ~  "Bed",
+                                         grepl("desk", summary, ignore.case = TRUE) ~  "Desk",
+                                         TRUE ~ "whatever"),
+                                         "timewastedproportion" = timewasted/allottedtime,
+                                         "worktype" = case_when(grepl("Linear", summary, ignore.case = TRUE) ~ "Math",
+                                                                grepl("Essay", summary, ignore.case = TRUE) ~ "Writing",
+                                                                TRUE ~ "whatever"))
+
+    #manually entering some missing values
+    productivitydata$daysleft[14] <- 0
+    productivitydata$daysleft[16] <- 4
+    productivitydata$daysleft[3] <- 13
+    productivitydata$daysleft[11] <- 14
+    productivitydata <- productivitydata %>% 
+      mutate("timeproductive" = (allottedtime - timewasted)) %>%
+      mutate("timeworkedproportion" = timeproductive/allottedtime)
+
+    violinplot <- ggplot(productivitydata, aes(x = studyarea, y = timewasted, fill = studyarea)) +
+      geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
+      geom_jitter(width = 0.05) +
+      scale_fill_manual(values = pal)
+      labs(title = "Allotted Work Time That was Wasted by Study Area",
+           y = "minutes wasted")
+
+    ## $y
+    ## [1] "minutes wasted"
+    ## 
+    ## $title
+    ## [1] "Allotted Work Time That was Wasted by Study Area"
+    ## 
+    ## attr(,"class")
+    ## [1] "labels"
+
+    violinplot
+
+![](index_files/figure-markdown_strict/unnamed-chunk-2-1.png)
+
+    #plot2, control for amount of time spent
+    violinplot2 <- ggplot(productivitydata, aes(x = studyarea, y = timewastedproportion, fill = studyarea)) +
+      geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
+      geom_jitter(width = 0.05) +
+      scale_fill_manual(values = pal)+
+      labs(title = "Proportion of Allotted Work Time that was Wasted by Study Area",
+           y = "time wasted/Time Allotted")
+    violinplot2
+
+![](index_files/figure-markdown_strict/unnamed-chunk-3-1.png)
+
+    pal <- wes_palette("Moonrise3", n=4, type = "discrete")
+    #plot3, math versus writing
+    violinplot3 <- ggplot(productivitydata, aes(x = worktype, y = timewasted, fill = worktype)) +
+      geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
+      geom_jitter(width = 0.05)+
+      scale_fill_manual(values = pal)+
+      labs(title = "Allotted Work Time That Was Wasted by Assignment Type",
+           y = "minutes wasted")
+    violinplot3
+
+![](index_files/figure-markdown_strict/unnamed-chunk-4-1.png)
+
+    #plot4, math versus writing controlling for differences in allotted time
+    violinplot4 <- ggplot(productivitydata, aes(x = worktype, y = timewastedproportion, fill = worktype)) +
+      geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
+      geom_jitter(width = 0.05)+
+      scale_fill_manual(values = pal)+
+      labs(title = "Allotted Work Time That Was Wasted by Assignment Type",
+           y = "minutes wasted")
+    violinplot4
+
+![](index_files/figure-markdown_strict/unnamed-chunk-5-1.png)
+
+    #filter out the outlier for math
+    noutliers <- productivitydata %>% filter(summary != "60, YoutubeLinear, Bed, 5")
+    violinplot5 <- ggplot(noutliers, aes(x = worktype, y = timewastedproportion, fill = worktype)) +
+      geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
+      geom_jitter(width = 0.05)+
+      scale_fill_manual(values = pal)+
+      labs(title = "Allotted Work Time That Was Wasted by Assignment Type",
+           y = "minutes wasted")
+    violinplot5
+
+![](index_files/figure-markdown_strict/unnamed-chunk-5-2.png)
+
+    #time productive by worktype
+    pal <- wes_palette("Darjeeling1", n=4, type = "discrete")
+    violinplot6 <- ggplot(productivitydata, aes(x = worktype, y = timeproductive, fill = worktype)) +
+      geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
+      geom_jitter(width = 0.05)+
+      scale_fill_manual(values = pal)+
+      labs(title = "Allotted Work Time That Was Used by Assignment Type",
+           y = "minutes wasted")
+    violinplot6
+
+![](index_files/figure-markdown_strict/unnamed-chunk-6-1.png)
+
+    violinplot7 <- ggplot(noutliers, aes(x = worktype, y = timeworkedproportion, fill = worktype)) +
+      geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
+      geom_jitter(width = 0.05)+
+      scale_fill_manual(values = pal)+
+      labs(title = "Allotted Work Time That Was Used by Assignment Type",
+           y = "minutes wasted")
+    violinplot7
+
+![](index_files/figure-markdown_strict/unnamed-chunk-6-2.png)
+
+    #linegraph
+    #manually enter missing day values
+    #plot x = daysuntildeadline, y = proportionwasted
+    #second layer=actual time given
+    linegraph1 <- ggplot(productivitydata, aes(x = daysleft)) + 
+      geom_smooth(aes(y = allottedtime), se = FALSE, fullrange = TRUE) +
+      scale_x_reverse() +
+      geom_ribbon(aes(ymin = 0,ymax = predict(loess(allottedtime ~ daysleft))),
+                     alpha = 0.4, fill = "#bef26b")+
+      geom_smooth(aes(y = timeproductive), se = FALSE, fullrange = TRUE) +
+      geom_ribbon(aes(ymin = 0,ymax = predict(loess(timeproductive ~ daysleft))),
+                     alpha = 1.0, fill = "#60ebe9")# +
+      #transition_reveal(rev(seq_along(daysleft)))
+    linegraph1
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+![](index_files/figure-markdown_strict/unnamed-chunk-7-1.png)
+
+    cor(productivitydata$daysleft, productivitydata$timewastedproportion)
+
+    ## [1] 0.4391658
+
+\#Question 1: What am I doing with my time overall?
+
+    allactivities <- mycal %>% 
+      filter(!(str_detect(summary, "Youtube") | str_detect(summary, "Actual")), 
+             summary != "120, Essay, Bed, 14") %>%
+      mutate("activity" = case_when(grepl("Linear", summary, ignore.case = TRUE) ~ "Math",
+                            grepl("Essay", summary, ignore.case = TRUE) ~ "Writing",
+                            (summary %in% c("Class", "Classes")) ~ "Class",
+                            (summary %in% c("Free", "Janet", "Allison", "Cleo")) ~ "Free",
+                            (summary %in% c("Call", "Meeting")) ~ "Meeting",
+                            summary == "Work" ~ "Work",
+                            summary == "Violin" ~ "Violin",
+                            TRUE ~ "Meeting"),
+             "hours" = as.numeric(length_hrs))
+
+    pal <- wes_palette("Moonrise3", n=7, type = "continuous")
+
+
+    activitiesgif <- ggplot(allactivities, aes(x=activity, fill = activity, y = hours)) + 
+       geom_bar(stat = "identity") +
+       scale_fill_manual(values = pal)+
+       transition_states(
+        date,
+        transition_length = 1,
+        state_length = 2) +
+       ease_aes('sine-in-out') +
+      labs(title = "{closest_state}")
+
+    anim_save("activities.gif", activitiesgif)
+
+![](activities.gif)
+
+    activitiesgif <- ggplot(allactivities, aes(x=activity, fill = activity, y = hours)) + 
+       geom_bar(stat = "identity") +
+       scale_fill_manual(values = pal) +
+      labs(title = "What I have been doing in Quarantine",
+           y = "total hours")
+    activitiesgif
+
+![](index_files/figure-markdown_strict/unnamed-chunk-9-1.png) \# Data
+collection
 
 I collected data by . . .
 

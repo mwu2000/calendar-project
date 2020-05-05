@@ -1,14 +1,8 @@
 ---
-title: 'Diary of a Data Science Student: Cabin Fever During COVID-19'
-author: "Maggie Wu"
-date: "Due Tuesday, May 5 by 5:00 PM"
-output:
-  pdf_document: default
-  html_document:
-    df_print: paged
+output: md_document
+always_allow_html: yes
 header-includes:
    - \usepackage{animate}
-subtitle: 'Stat231: Google Calendar Project'
 ---
 
 ```{r setup, include=FALSE}
