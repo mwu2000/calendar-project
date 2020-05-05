@@ -100,7 +100,7 @@ productivitydata <- productivitydata %>%
   mutate("timeworkedproportion" = timeproductive/allottedtime)
 ```
 
-```{r}
+```{r, fig.height = 2.5, fig.width=5}
 head(productivitydata)
 ```
 
