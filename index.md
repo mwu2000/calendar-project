@@ -187,8 +187,22 @@ for writing assignments. However, let’s control for proportions.
 
 ![](index_files/figure-markdown_strict/unnamed-chunk-9-1.png)
 
-![](index_files/figure-markdown_strict/unnamed-chunk-10-1.png) After
-controlling for proportions
+After controlling for proportions, we see that there seems to be some
+difference in time wasted by assignment type. Writing assignments, while
+having less variation, is predicted to always have at least 50% of the
+time wasted. By this model, I am always wasting a lot of time when I
+write! While math does have at least some of its probability
+distribution fall in the higher end, this may be due to the outlier at
+1.00.
+
+![](index_files/figure-markdown_strict/unnamed-chunk-10-1.png)
+
+Let’s factor out the outlier at 1.00 for math assignments. Below, we see
+that the probability density of the data for math does not extend above
+0.70 and that the fattest part of the probability density is around
+0.1275. However, for writing, the distribution is never lower than 0.50.
+While there is some overlap, I am clearly wasting more time when writing
+than doing math.
 
     #filter out the outlier for math
     noutliers <- productivitydata %>% filter(summary != "60, YoutubeLinear, Bed, 5")
@@ -202,48 +216,63 @@ controlling for proportions
 
 ![](index_files/figure-markdown_strict/unnamed-chunk-11-1.png)
 
-    #time productive by worktype
-    pal <- wes_palette("Darjeeling1", n=4, type = "discrete")
-    violinplot6 <- ggplot(productivitydata, aes(x = worktype, y = timeproductive, fill = worktype)) +
-      geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
-      geom_jitter(width = 0.05)+
-      scale_fill_manual(values = pal)+
-      labs(title = "Allotted Work Time That Was Used by Assignment Type",
-           y = "minutes wasted")
-    violinplot6
+Inversely, below is a graph of the proportion of time used by work type.
+We see comparable results to above.
 
-![](index_files/figure-markdown_strict/unnamed-chunk-12-1.png)
+    pal <- wes_palette("Darjeeling1", n=2, type = "discrete")
 
     violinplot7 <- ggplot(noutliers, aes(x = worktype, y = timeworkedproportion, fill = worktype)) +
-      geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
+      geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + 
       geom_jitter(width = 0.05)+
       scale_fill_manual(values = pal)+
       labs(title = "Allotted Work Time That Was Used by Assignment Type",
            y = "minutes wasted")
     violinplot7
 
-![](index_files/figure-markdown_strict/unnamed-chunk-12-2.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-12-1.png)
+
+Thirdly, we have a graph that depicts my natural work flow. After
+averaging over the observations at each day until deadline, the graph
+shows the amount of time that I’ve given myself for an assignment and
+the amounnt of time that is actually used. The amount of time that is
+used is in red while the amount of time wasted is in blue. Of course,
+because the graph is predicting based on the observations of allotted
+time and the amount of time that was productive separately, the shaded
+area is not an exact replica of the proportions of time used and wasted.
 
     #linegraph
     #manually enter missing day values
     #plot x = daysuntildeadline, y = proportionwasted
     #second layer=actual time given
     linegraph1 <- ggplot(productivitydata, aes(x = daysleft)) + 
-      geom_smooth(aes(y = allottedtime), se = FALSE, fullrange = TRUE) +
+      #geom_smooth(aes(y = allottedtime), se = FALSE, fullrange = TRUE) +
       scale_x_reverse() +
       geom_ribbon(aes(ymin = 0,ymax = predict(loess(allottedtime ~ daysleft))),
-                     alpha = 0.4, fill = "#bef26b")+
-      geom_smooth(aes(y = timeproductive), se = FALSE, fullrange = TRUE) +
+                     alpha = 0.4, fill = "#68cae3")+
+      #geom_smooth(aes(y = timeproductive), se = FALSE, fullrange = TRUE) +
       geom_ribbon(aes(ymin = 0,ymax = predict(loess(timeproductive ~ daysleft))),
-                     alpha = 1.0, fill = "#60ebe9")# +
-      #transition_reveal(rev(seq_along(daysleft)))
+                     alpha = 0.95, fill = "#e67d60")
+      
     linegraph1
-
-    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
-    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
 ![](index_files/figure-markdown_strict/unnamed-chunk-13-1.png)
 
-    cor(productivitydata$daysleft, productivitydata$timewastedproportion)
+We see that in general, as time gets closer to the due date, I am using
+more of my time. We have a correlation between the time worked and the
+days until deadline of -0.4392, which means that there is a moderate
+correlation between the amount of time worked and the days until the
+deadline. The negative value indicates that as the number of days until
+the deadline increases, the proportion of time spent working decreases,
+or as deadlines draw nearer, the proportion of time spent working
+increases. This confirms my original estimate.
 
-    ## [1] 0.4391658
+This graph is also useful because it shows that at the beginning, I am
+giving myself almost the same amount of work time as the end. Around 5
+days, I give myself less work time, even though that is when the rate of
+work increases. However, if I want to mirror my natural work flow, I
+should begin to give myself less time prior to ten days until a
+deadline, as most of that is wasted. I should give myself enough time 5
+days prior to a deadline, as I am doing right now. Overall, I see that I
+overestimate the amount of time it takes to accomplish an assignment, as
+I am giving myself a lot more time than necessary, as I was able to
+finish all the assignments in this analysis on time.
