@@ -30,7 +30,7 @@ Data Collection
 ---------------
 
 I collected data by logging in my daily schedule into Google Calendar.
-Every morning for two weeks, I logged in my day’s planned activities and
+Every morning for 13 days, I logged in my day’s planned activities and
 stuck to the schedule (for the most part). So, each day I planned set
 times to do my writing or math assignments or sometimes both. In the
 dataset, the *allottedtime* variable tracks the amount of time I gave
@@ -123,74 +123,72 @@ Results
 
 ### Question 1: Overall, how am I spending my time?
 
+The graph below shows my daily activity breakdown over a two week
+period. There is a lot variation in my daily activites! Every day looks
+a little bit different.
+
 ![](activities.gif)
 
-    activitiesplot <- ggplot(allactivities, aes(x=activity, fill = activity, y = hours)) + 
-       geom_bar(stat = "identity") +
-       scale_fill_manual(values = pal) +
-      labs(title = "What I have been doing in Quarantine",
-           y = "total hours")
-    activitiesplot
+This second plot depicts the total hours that I spent on each activity
+during the two week period. I did not keep track of the time that I was
+sleeping or waking up, which explains why there are less hours than
+there are in two weeks.
 
-![](index_files/figure-markdown_strict/unnamed-chunk-6-1.png)
+I have a lot of free time! By a wide margin, most of the time is going
+towards free time. This makes sense, because I have had a lot of free
+time. Because I categorized any time spent eating, exercising, talking
+with my friends, and watching films/reading as free time, there are many
+different activities that add to total that is just shy of 80 hours.
 
-    pal <- wes_palette("GrandBudapest2", n=4, type = "discrete")
+At first glance, it doesn’t look like I’m spending a lot of time on
+school. However, three separate categories are all school work time–if I
+added up math, writing, and work, this would be about 64 hours of work
+time. (The *work* category is for miscellaneous schoolwork that I am not
+tracking for my productivity analysis).
 
-    #Plot 1: violinplot of how much time is wasted in bed versus at the desk
+### Questions 2 and 3
 
-    violinplot <- ggplot(productivitydata, aes(x = studyarea, y = timewasted, fill = studyarea)) +
-      geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
-      geom_jitter(width = 0.05) +
-      scale_fill_manual(values = pal)
-      labs(title = "Allotted Work Time That was Wasted by Study Area",
-           y = "minutes wasted")
+While I spent 24 hours writing and 15 hours doing math problems, how
+much of that time was actually spent working? Often, I found myself
+sitting down to begin a work session, only to fall down a self care
+Youtube rabbit hole after ten minutes of focusing.
 
-    ## $y
-    ## [1] "minutes wasted"
-    ## 
-    ## $title
-    ## [1] "Allotted Work Time That was Wasted by Study Area"
-    ## 
-    ## attr(,"class")
-    ## [1] "labels"
-
-    violinplot
+First, I wanted to explore whether the place that I worked had any
+effect on my productivity level. The violin plot below depicts this. The
+bands represent the quartiles while the width of the plot represents the
+probability density of the data at that value.
 
 ![](index_files/figure-markdown_strict/unnamed-chunk-7-1.png)
 
-    #plot2, control for amount of time spent
-    violinplot2 <- ggplot(productivitydata, aes(x = studyarea, y = timewastedproportion, fill = studyarea)) +
-      geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
-      geom_jitter(width = 0.05) +
-      scale_fill_manual(values = pal)+
-      labs(title = "Proportion of Allotted Work Time that was Wasted by Study Area",
-           y = "time wasted/Time Allotted")
-    violinplot2
+There is a lot of variation in both categories, but more in bed than in
+desk. Desk minutes wasted has an outlier, but most of the data is lower,
+so the probability density is also lower. In truth, desk is the widest
+at its lowest values, meaning that it is more probable for me not to
+waste a lot of time (below 50 minutes) at my desk. Bed is a different
+story, as it looks like the medians is around 100 wasted minutes.
+
+But wait! Doesn’t the allotted time affect the amount of time wasted? If
+I give less time to work done in my bed, wouldn’t there naturally be
+less minutes wasted? To control for this, I compared the proportions of
+time wasted out of the total allotted work time.
 
 ![](index_files/figure-markdown_strict/unnamed-chunk-8-1.png)
 
-    pal <- wes_palette("Moonrise3", n=4, type = "discrete")
-    #plot3, math versus writing
-    violinplot3 <- ggplot(productivitydata, aes(x = worktype, y = timewasted, fill = worktype)) +
-      geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
-      geom_jitter(width = 0.05)+
-      scale_fill_manual(values = pal)+
-      labs(title = "Allotted Work Time That Was Wasted by Assignment Type",
-           y = "minutes wasted")
-    violinplot3
+Here, we see that the distributions of proportions of work time wasted
+are very similar, regardless of the area worked. Therefore, we can
+eliminate the work area as a factor that has any serious effect on my
+productivity.
+
+Secondly, I looked at the amount of time wasted by assignment type. At
+first glance, it looks like there is a lot of variatiion in minutes
+wasted for writing assignments but not a lot for math assignments.
+Additionally, there seem to be less minutes wasted overall for math than
+for writing assignments. However, let’s control for proportions.
 
 ![](index_files/figure-markdown_strict/unnamed-chunk-9-1.png)
 
-    #plot4, math versus writing controlling for differences in allotted time
-    violinplot4 <- ggplot(productivitydata, aes(x = worktype, y = timewastedproportion, fill = worktype)) +
-      geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
-      geom_jitter(width = 0.05)+
-      scale_fill_manual(values = pal)+
-      labs(title = "Allotted Work Time That Was Wasted by Assignment Type",
-           y = "minutes wasted")
-    violinplot4
-
-![](index_files/figure-markdown_strict/unnamed-chunk-10-1.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-10-1.png) After
+controlling for proportions
 
     #filter out the outlier for math
     noutliers <- productivitydata %>% filter(summary != "60, YoutubeLinear, Bed, 5")
@@ -198,11 +196,11 @@ Results
       geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
       geom_jitter(width = 0.05)+
       scale_fill_manual(values = pal)+
-      labs(title = "Allotted Work Time That Was Wasted by Assignment Type",
+      labs(title = "Proportion of Allotted Work Time That Was Wasted by Assignment Type",
            y = "minutes wasted")
     violinplot5
 
-![](index_files/figure-markdown_strict/unnamed-chunk-10-2.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-11-1.png)
 
     #time productive by worktype
     pal <- wes_palette("Darjeeling1", n=4, type = "discrete")
@@ -214,7 +212,7 @@ Results
            y = "minutes wasted")
     violinplot6
 
-![](index_files/figure-markdown_strict/unnamed-chunk-11-1.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-12-1.png)
 
     violinplot7 <- ggplot(noutliers, aes(x = worktype, y = timeworkedproportion, fill = worktype)) +
       geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
@@ -224,7 +222,7 @@ Results
            y = "minutes wasted")
     violinplot7
 
-![](index_files/figure-markdown_strict/unnamed-chunk-11-2.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-12-2.png)
 
     #linegraph
     #manually enter missing day values
@@ -244,37 +242,8 @@ Results
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
-![](index_files/figure-markdown_strict/unnamed-chunk-12-1.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-13-1.png)
 
     cor(productivitydata$daysleft, productivitydata$timewastedproportion)
 
     ## [1] 0.4391658
-
-1.  Create relevant summaries and visualizations, wrangling the data as
-    necessary along the way. (Note: MUCH, MUCH LESS wrangling is
-    expected here than in the Clearinghouse Challenge. The `ical`
-    package imports the calendar data into a nicely formatted dataframe,
-    with variables for summary of the event, time start, time end, and
-    description.) Wrangling should *not* take a substantial amount of
-    time.
-
-2.  What insights can you glean from how you’re spending your time?
-    Write a 3-5 paragraph report introducing your questions of interest,
-    explaining what you found, and reflecting on the answers to your
-    questions posed.
-
-3.  Finally, write a short reflection (1-2 paragraphs) on the process.
-    As someone who provides data: What expectations do you have when you
-    give your data (e.g. to Facebook, Google, MapMyRun, etc.)? As
-    someone who analyzes others’ data: What legal and ethical
-    responsibilities do you have?
-
-Data collection
-===============
-
-Results
-=======
-
-And here are my results . . .
-
-    # intersperse relevant figures and text

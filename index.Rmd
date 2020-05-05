@@ -185,9 +185,9 @@ violinplot2
 
 Here, we see that the distributions of proportions of work time wasted are very similar, regardless of the area worked. Therefore, we can eliminate the work area as a factor that has any serious effect on my productivity.
 
-Secondly, I looked at the amount of time wasted by assignment type.
+Secondly, I looked at the amount of time wasted by assignment type. At first glance, it looks like there is a lot of variatiion in minutes wasted for writing assignments but not a lot for math assignments. Additionally, there seem to be less minutes wasted overall for math than for writing assignments. However, let's control for proportions.
 
-```{r}
+```{r, echo = FALSE}
 pal <- wes_palette("Moonrise3", n=4, type = "discrete")
 #plot3, math versus writing
 violinplot3 <- ggplot(productivitydata, aes(x = worktype, y = timewasted, fill = worktype)) +
@@ -199,23 +199,25 @@ violinplot3 <- ggplot(productivitydata, aes(x = worktype, y = timewasted, fill =
 violinplot3
 ```
 
-```{r}
+```{r, echo = FALSE}
 #plot4, math versus writing controlling for differences in allotted time
 violinplot4 <- ggplot(productivitydata, aes(x = worktype, y = timewastedproportion, fill = worktype)) +
   geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
   geom_jitter(width = 0.05)+
   scale_fill_manual(values = pal)+
-  labs(title = "Allotted Work Time That Was Wasted by Assignment Type",
+  labs(title = "Proportion of Allotted Work Time That Was Wasted by Assignment Type",
        y = "minutes wasted")
 violinplot4
-
+```
+After controlling for proportions 
+```{r}
 #filter out the outlier for math
 noutliers <- productivitydata %>% filter(summary != "60, YoutubeLinear, Bed, 5")
 violinplot5 <- ggplot(noutliers, aes(x = worktype, y = timewastedproportion, fill = worktype)) +
   geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
   geom_jitter(width = 0.05)+
   scale_fill_manual(values = pal)+
-  labs(title = "Allotted Work Time That Was Wasted by Assignment Type",
+  labs(title = "Proportion of Allotted Work Time That Was Wasted by Assignment Type",
        y = "minutes wasted")
 violinplot5
 ```
