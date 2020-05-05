@@ -83,6 +83,8 @@ added up math, writing, and work, this would be about 64 hours of work
 time. (The *work* category is for miscellaneous schoolwork that I am not
 tracking for my productivity analysis).
 
+![](index_files/figure-markdown_strict/unnamed-chunk-4-1.png)
+
 ### Questions 2 and 3
 
 While I spent 24 hours writing and 15 hours doing math problems, how

@@ -132,7 +132,7 @@ I have a lot of free time! By a wide margin, most of the time is going towards f
 
 At first glance, it doesn't look like I'm spending a lot of time on school. However, three separate categories are all school work time--if I added up math, writing, and work, this would be about 64 hours of work time. (The *work* category is for miscellaneous schoolwork that I am not tracking for my productivity analysis).
 
-```{r, include = FALSE}
+```{r, echo = FALSE}
 activitiesplot <- ggplot(allactivities, aes(x=activity, fill = activity, y = hours)) + 
    geom_bar(stat = "identity") +
    scale_fill_manual(values = pal) +
