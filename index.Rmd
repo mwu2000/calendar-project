@@ -151,7 +151,7 @@ activitiesplot
 
 While I spent 24 hours writing and 15 hours doing math problems, how much of that time was actually spent working? Often, I found myself sitting down to begin a work session, only to fall down a self care Youtube rabbit hole after ten minutes of focusing.
 
-First, I wanted to explore whether the place that I worked had any effect on my productivity level.
+First, I wanted to explore whether the place that I worked had any effect on my productivity level. The violin plot below depicts this. The bands represent the quartiles while the width of the plot represents the probability density of the data at that value.
 
 ```{r, echo = FALSE}
 
@@ -162,12 +162,15 @@ pal <- wes_palette("GrandBudapest2", n=4, type = "discrete")
 violinplot <- ggplot(productivitydata, aes(x = studyarea, y = timewasted, fill = studyarea)) +
   geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
   geom_jitter(width = 0.05) +
-  scale_fill_manual(values = pal)
+  scale_fill_manual(values = pal) +
   labs(title = "Allotted Work Time That was Wasted by Study Area",
-       y = "minutes wasted")
+       y= "minutes wasted")
 violinplot
 ```
 
+There is a lot of variation in both categories, but more in bed than in desk. Desk minutes wasted has an outlier, but most of the data is lower, so the probability density is also lower. In truth, desk is the widest at its lowest values, meaning that it is more probable for me not to waste a lot of time (below 50 minutes) at my desk. Bed is a different story, as it looks like the medians is around 100 wasted minutes.
+
+But wait! Doesn't the allotted time affect the amount of time wasted? If I give less time to work done in my bed, 
 
 ```{r}
 #plot2, control for amount of time spent
