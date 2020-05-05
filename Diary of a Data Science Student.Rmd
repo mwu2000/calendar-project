@@ -1,9 +1,11 @@
 ---
-title: "Diary of a Data Science Student: Cabin Fever During COVID-19"
-subtitle: "Stat231: Google Calendar Project"
+title: 'Diary of a Data Science Student: Cabin Fever During COVID-19'
 author: "Maggie Wu"
 date: "Due Tuesday, May 5 by 5:00 PM"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
+subtitle: 'Stat231: Google Calendar Project'
 ---
 
 ```{r setup, include=FALSE}
@@ -89,7 +91,7 @@ mycal <- ogcal%>%
   mutate("daysleft" = as.numeric(str_extract(summary, "[0-9]$")),
          "timewasted" = as.numeric(case_when(grepl("\\d+,", summary) ~ str_extract(summary, "\\d+"),
                                             TRUE ~ "20000000")),
-         "workmin" = as.numeric(length_min)
+         "allottedtime" = as.numeric(length_min)
          ) %>%
   select(-uid, -description, -last.modified, -status)
 
@@ -106,10 +108,19 @@ productivitydata <- mycal %>% filter(timewasted != 20000000) %>%
   mutate("studyarea" = case_when(grepl("Bed", summary, ignore.case = TRUE) ~  "Bed",
                                      grepl("desk", summary, ignore.case = TRUE) ~  "Desk",
                                      TRUE ~ "whatever"),
-                                     "timewastedproportion" = timewasted/workmin,
+                                     "timewastedproportion" = timewasted/allottedtime,
                                      "worktype" = case_when(grepl("Linear", summary, ignore.case = TRUE) ~ "Math",
                                                             grepl("Essay", summary, ignore.case = TRUE) ~ "Writing",
                                                             TRUE ~ "whatever"))
+
+#manually entering some missing values
+productivitydata$daysleft[14] <- 0
+productivitydata$daysleft[16] <- 4
+productivitydata$daysleft[3] <- 13
+productivitydata$daysleft[11] <- 14
+productivitydata <- productivitydata %>% 
+  mutate("timeproductive" = (allottedtime - timewasted)) %>%
+  mutate("timeworkedproportion" = timeproductive/allottedtime)
 
 violinplot <- ggplot(productivitydata, aes(x = studyarea, y = timewasted, fill = studyarea)) +
   geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
@@ -156,54 +167,96 @@ violinplot4
 
 #filter out the outlier for math
 noutliers <- productivitydata %>% filter(summary != "60, YoutubeLinear, Bed, 5")
-violinplot4 <- ggplot(noutliers, aes(x = worktype, y = timewastedproportion, fill = worktype)) +
+violinplot5 <- ggplot(noutliers, aes(x = worktype, y = timewastedproportion, fill = worktype)) +
   geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
   geom_jitter(width = 0.05)+
   scale_fill_manual(values = pal)+
   labs(title = "Allotted Work Time That Was Wasted by Assignment Type",
        y = "minutes wasted")
-violinplot4
+violinplot5
 ```
+
 ```{r}
-#manually entering some missing values
-productivitydata$daysleft[14] <- 0
-productivitydata$daysleft[16] <- 4
-productivitydata$daysleft[3] <- 13
-productivitydata <- productivitydata %>% mutate("timeproductive" = (workmin - timewasted))
+#time productive by worktype
+pal <- wes_palette("Darjeeling1", n=4, type = "discrete")
+violinplot6 <- ggplot(productivitydata, aes(x = worktype, y = timeproductive, fill = worktype)) +
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
+  geom_jitter(width = 0.05)+
+  scale_fill_manual(values = pal)+
+  labs(title = "Allotted Work Time That Was Used by Assignment Type",
+       y = "minutes wasted")
+violinplot6
+
+violinplot7 <- ggplot(noutliers, aes(x = worktype, y = timeworkedproportion, fill = worktype)) +
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
+  geom_jitter(width = 0.05)+
+  scale_fill_manual(values = pal)+
+  labs(title = "Allotted Work Time That Was Used by Assignment Type",
+       y = "minutes wasted")
+violinplot7
+```
 
 
+```{r}
 #linegraph
 #manually enter missing day values
 #plot x = daysuntildeadline, y = proportionwasted
 #second layer=actual time given
 linegraph1 <- ggplot(productivitydata, aes(x = daysleft)) + 
-  geom_smooth(aes(y = workmin), se = FALSE, fullrange = TRUE) +
+  geom_smooth(aes(y = allottedtime), se = FALSE, fullrange = TRUE) +
   scale_x_reverse() +
-  geom_ribbon(aes(ymin = 0,ymax = predict(loess(workmin ~ daysleft))),
-                 alpha = 0.4, fill = "#F5CDB4")+
+  geom_ribbon(aes(ymin = 0,ymax = predict(loess(allottedtime ~ daysleft))),
+                 alpha = 0.4, fill = "#bef26b")+
   geom_smooth(aes(y = timeproductive), se = FALSE, fullrange = TRUE) +
   geom_ribbon(aes(ymin = 0,ymax = predict(loess(timeproductive ~ daysleft))),
-                 alpha = 1.0, fill = "#74A089")
+                 alpha = 1.0, fill = "#60ebe9")# +
+  #transition_reveal(rev(seq_along(daysleft)))
 linegraph1
+
+cor(productivitydata$daysleft, productivitydata$timewastedproportion)
 ```
 
-```{r}
-#Our data has too much variation and too little observations. Let's simulate some more results!
-distributionworkmin <- ggplot(productivitydata, aes(x = workmin)) + geom_bar()
-distributionworkmin
+#Question 1: What am I doing with my time overall?
+```{r, message=FALSE}
+allactivities <- mycal %>% 
+  filter(!(str_detect(summary, "Youtube") | str_detect(summary, "Actual")), 
+         summary != "120, Essay, Bed, 14") %>%
+  mutate("activity" = case_when(grepl("Linear", summary, ignore.case = TRUE) ~ "Math",
+                        grepl("Essay", summary, ignore.case = TRUE) ~ "Writing",
+                        (summary %in% c("Class", "Classes")) ~ "Class",
+                        (summary %in% c("Free", "Janet", "Allison", "Cleo")) ~ "Free",
+                        (summary %in% c("Call", "Meeting")) ~ "Meeting",
+                        summary == "Work" ~ "Work",
+                        summary == "Violin" ~ "Violin",
+                        TRUE ~ "Meeting"),
+         "hours" = as.numeric(length_hrs))
+
+pal <- wes_palette("Moonrise3", n=7, type = "continuous")
+
+
+activitiesgif <- ggplot(allactivities, aes(x=activity, fill = activity, y = hours)) + 
+   geom_bar(stat = "identity") +
+   scale_fill_manual(values = pal)+
+   transition_states(
+    date,
+    transition_length = 1,
+    state_length = 2) +
+   ease_aes('sine-in-out') +
+  labs(title = "{closest_state}")
+
+anim_save("activities.gif", activitiesgif)
 ```
 
+
+![](activities.gif)
+
 ```{r}
-#faceted by work type
-linegraph2 <- ggplot(productivitydata, aes(x = daysleft)) + 
-  geom_smooth(aes(y = workmin), se = FALSE, fullrange = TRUE) +
-  scale_x_reverse() +
-  geom_ribbon(aes(ymin = 0,ymax = predict(loess(workmin ~ daysleft))),
-                 alpha = 0.4, fill = "#F5CDB4")+
-  geom_smooth(aes(y = timeproductive), se = FALSE, fullrange = TRUE) +
-  geom_ribbon(aes(ymin = 0,ymax = predict(loess(timeproductive ~ daysleft))),
-                 alpha = 1.0, fill = "#74A089")
-linegraph2
+activitiesgif <- ggplot(allactivities, aes(x=activity, fill = activity, y = hours)) + 
+   geom_bar(stat = "identity") +
+   scale_fill_manual(values = pal) +
+  labs(title = "What I have been doing in Quarantine",
+       y = "total hours")
+activitiesgif
 ```
 
 
