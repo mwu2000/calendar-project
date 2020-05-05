@@ -170,9 +170,9 @@ violinplot
 
 There is a lot of variation in both categories, but more in bed than in desk. Desk minutes wasted has an outlier, but most of the data is lower, so the probability density is also lower. In truth, desk is the widest at its lowest values, meaning that it is more probable for me not to waste a lot of time (below 50 minutes) at my desk. Bed is a different story, as it looks like the medians is around 100 wasted minutes.
 
-But wait! Doesn't the allotted time affect the amount of time wasted? If I give less time to work done in my bed, 
+But wait! Doesn't the allotted time affect the amount of time wasted? If I give less time to work done in my bed, wouldn't there naturally be less minutes wasted? To control for this, I compared the proportions of time wasted out of the total allotted work time.
 
-```{r}
+```{r, echo = FALSE}
 #plot2, control for amount of time spent
 violinplot2 <- ggplot(productivitydata, aes(x = studyarea, y = timewastedproportion, fill = studyarea)) +
   geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
@@ -183,6 +183,9 @@ violinplot2 <- ggplot(productivitydata, aes(x = studyarea, y = timewastedproport
 violinplot2
 ```
 
+Here, we see that the distributions of proportions of work time wasted are very similar, regardless of the area worked. Therefore, we can eliminate the work area as a factor that has any serious effect on my productivity.
+
+Secondly, I looked at the amount of time wasted by assignment type.
 
 ```{r}
 pal <- wes_palette("Moonrise3", n=4, type = "discrete")
@@ -257,11 +260,5 @@ linegraph1
 cor(productivitydata$daysleft, productivitydata$timewastedproportion)
 ```
 
-
-5. Create relevant summaries and visualizations, wrangling the data as necessary along the way.  (Note: MUCH, MUCH LESS wrangling is expected here than in the Clearinghouse Challenge.  The `ical` package imports the calendar data into a nicely formatted dataframe, with variables for summary of the event, time start, time end, and description.)  Wrangling should *not* take a substantial amount of time. 
-
-6. What insights can you glean from how you're spending your time?  Write a 3-5 paragraph report introducing your questions of interest, explaining what you found, and reflecting on the answers to your questions posed.  
-
-7. Finally, write a short reflection (1-2 paragraphs) on the process.  As someone who provides data: What expectations do you have when you give your data (e.g. to Facebook, Google, MapMyRun, etc.)?  As someone who analyzes others' data: What legal and ethical responsibilities do you have?
 
 
