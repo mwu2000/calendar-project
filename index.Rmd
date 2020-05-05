@@ -108,6 +108,8 @@ head(productivitydata)
 ## Results
 
 ### Question 1: Overall, how am I spending my time?
+
+The graph below 
 ```{r, message= FALSE, fig.show='animate', interval=1/10, include = FALSE}
 
 pal <- wes_palette("Moonrise3", n=7, type = "continuous")
