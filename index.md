@@ -1,164 +1,67 @@
 
 
-Overview
-========
+Diary of a Data Science Student: How to Avoid Lazy Dog Days
+===========================================================
 
-This project will be undertaken individually. While you can discuss
-general ideas with your peers, please do not share code directly with
-each other. You can use other resources (including course materials, the
-internet, me, …).
+Questions of Interest
+---------------------
 
-How do I spend my time?
------------------------
+1.  How am I spending my time in quarantine?
 
-One challenge of remote learning that many students have voiced is the
-difficulty of structuring our time in the absence of the usual
-structures in place when on campus.
+2.  Recently, I have been thinking about how to maximize my
+    productivity. In the past, I have observed that while I give myself
+    a lot of time to work on an assignment, I do not make use of the
+    entire chunk of time, especially if it is far away from my deadline.
+    However, on days closer to a deadline, I always do more work. This
+    has led me to wonder, **does the proportion of the allotted time
+    that I am actually working increase as I get closer to a deadline?**
+    Either way, **I want to map my work flow so I know when to give
+    myself the most time when I feel motivated to work.** Maybe working
+    closer to the deadline is just my natural work flow and in the
+    future, I should plan for more work time closer to the deadline.
 
-How *are* we spending our time now? In this project, we’ll track how
-we’re spending our time using Google Calendar, then import the calendar
-data into R to analyze and provide insights into how we’re spending our
-time.
+3.  **I am also wondering what conditions allow me to be more
+    productive.** How does the type of assignment (math homework or
+    essay writing) affect my productivity levels? I also tend to work
+    either at my desk or on my bed. How does the work area (bed or desk)
+    affect my productivity level?
 
-The project aims to give you the opportunity to “play the whole \[Data
-Science\] game”, including proposing a question of interest that can be
-addressed with data and partaking in *data collection*, as well as
-wrangling, visualizing, analyzing, and reflecting on the information
-gathered. I hope an ancillary benefit is that it provides you with
-insights into how you’re spending your time, and ideas for how better to
-manage your time. (One tip: create a “weekly plan” at the beginning of
-each week, and document any changes as the week goes on. See the “Video:
-Google Calendar Tips” on our Moodle course page.)
+Data Collection
+---------------
 
-Feel free to extend upon this basic question “how do I spend my time?”
-or explore a variation of it. For instance, some other ideas include:
+I collected data by logging in my daily schedule into Google Calendar.
+Every morning for two weeks, I logged in my day’s planned activities and
+stuck to the schedule (for the most part). So, each day I planned set
+times to do my writing or math assignments or sometimes both. In the
+dataset, the *allottedtime* variable tracks the amount of time I gave
+myself each day. I also logged what I was doing in the rest of the day.
 
--   Document “intended time” doing things (e.g. studying, sleeping)
-    versus “actual time” doing those things, and compare results
--   If you already use Google Calendar as a way to keep track of your
-    schedule, you could compare how your time was spent at the beginning
-    of the semester (on campus) to how your time is being spent at the
-    end of the semester (since remote learning/COVID-19 isolation)
--   Feeling artistic? Feel free to go the *data art* route, and create
-    visualizations using other mediums outside of R. For examples: Dear
-    Data
-    (<a href="http://www.dear-data.com/theproject" class="uri">http://www.dear-data.com/theproject</a>)
-    and Environmental Graphiti
-    (<a href="http://www.environmentalgraphiti.org/series" class="uri">http://www.environmentalgraphiti.org/series</a>).
+At the end of each work session, I looked at my search history on Google
+Chrome and calculated the total amount of time that I was on other sites
+not related to my work, such as Youtube or social media. I put this into
+my google calendar as part of the summary. When I’m working, the
+majority of the time that I get distracted is from the Internet, so my
+search history was an accurate reflection of all the time that I wasted.
+The *timewasted* variable tracks the amount of time per work session
+that was spent off task. I also kept track of where I was working
+(*studyarea*) and the assignment type (*worktype*).
 
-Details
-=======
+After collecting my data, I downloaded my calendar as a .ics file and
+began wrangling. There are two datasets: productivitydata, which
+contains the variables related to my work sessions, and the more general
+activitydata, which contains all the activities that I have done in
+quarantine.
 
-What to do
-----------
-
-1.  Identify 2-4 primary questions of interest to you about how you
-    spend your time.
-
-What is the ideal amount of work time per day? How much of my current
-“work time” is being wasted on Youtube? Ideal activity breakdown by day,
-track actual breakdown
-
-Parkinson’s Law: Work expands to fill the time available for its
-completion. track allotted time for homework every day. Does it take
-longer or shorter to do work as a function of time allotted time? week
-1: less time week 2: more time
-
-For my project, I would like to do a little experiment. Recently, I’ve
-been thinking about how to maximize my efficiency, and I stumbled across
-this saying, called Parkinson’s Law: “work expands so as to fill the
-time available for its completion”. In the past, I have observed that if
-I have a five-page essay due in a week, I tend to take the entire week
-to stare at a screen and ponder over every word. However, some other
-times, I have a paper of the same length in only half the time. In both
-situations, I get the assignment done with comparable grades.For this
-project, I want to set a certain block of time aside each day for
-writing my research paper that is coincidentally due on the same day as
-this project. Each day will have a different interval of time. I will
-measure whether the amount of work I get done in each session by keeping
-track of how many words I write and whether the writing is up to my
-caliber (1, 0). I will test whether the amount of work I get done varies
-by date or not. If it does not, my results support Parkinson’s Law–the
-amount of work fills up for the time allotted. If it does vary and if
-there is a correlation, that means that the amount of work I do is
-related to the time I give myself.
-
-1.  Track your time in your Google Calendar application for
-    approximately 7-10 days (a longer amount of time would be ideal, but
-    we’re pressed for time here!). Fill in blocks of time and mark an
-    entry with the activity you were performing: sleeping, studying,
-    eating, exercising, socializing, etc. How you fill in and categorize
-    your blocks of time should depend on what your questions of interest
-    are.
-
-2.  Export your calendar data to `.ics` file format (a universal
-    calendar format used by several email and calendar programs). This
-    should take less than 5 minutes:
-    <a href="https://support.google.com/calendar/answer/37111?hl=en" class="uri">https://support.google.com/calendar/answer/37111?hl=en</a>.
-
-3.  Import the `.ics` file into R as a dataframe using the `ical`
-    package (code to get you started is given below).
-
-4.  Create relevant summaries and visualizations, wrangling the data as
-    necessary along the way. (Note: MUCH, MUCH LESS wrangling is
-    expected here than in the Clearinghouse Challenge. The `ical`
-    package imports the calendar data into a nicely formatted dataframe,
-    with variables for summary of the event, time start, time end, and
-    description.) Wrangling should *not* take a substantial amount of
-    time.
-
-5.  What insights can you glean from how you’re spending your time?
-    Write a 3-5 paragraph report introducing your questions of interest,
-    explaining what you found, and reflecting on the answers to your
-    questions posed.
-
-6.  Finally, write a short reflection (1-2 paragraphs) on the process.
-    As someone who provides data: What expectations do you have when you
-    give your data (e.g. to Facebook, Google, MapMyRun, etc.)? As
-    someone who analyzes others’ data: What legal and ethical
-    responsibilities do you have?
-
-Tips
-----
-
--   Avoid creating calendar entries with a “repeat” schedule.
-    Unfortunately, calendar entries based on “repeat” schedules only
-    appear once (the first occurence) in the R dataframe. (Or, if you do
-    use repeat events – you would need to write an algorithm to code the
-    recurring events.)
--   The color coding of events is also lost when exporting the data into
-    the `.ics` file, so don’t rely on color-coding your calendar to give
-    you information.
--   There is a `googlecalendar` package under development that connects
-    with Google’s Calendar API that you may come across while searching
-    online. Although you are free to explore that API if you want, it is
-    not necessary nor expected that you utilize it for this project. The
-    steps for importing your Google Calendar data into R are given
-    below. (I have not explored the package or API myself; it could be a
-    dead end.)
-
-Getting started . . .
-=====================
-
-The code below can be used to import the `.ics` file into R as a
-dataframe. Be sure to include the relevant path (where your `.ics` file
-is located) and update to your file name (with your email address).
-
-    #eval = FALSE
-    library(tidyverse)
-
-    ## ── Attaching packages ───────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ──────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
-
-    library(lubridate)
 
     ## 
     ## Attaching package: 'lubridate'
@@ -166,30 +69,6 @@ is located) and update to your file name (with your email address).
     ## The following object is masked from 'package:base':
     ## 
     ##     date
-
-    library(ical)
-    library(gganimate)
-
-    ogcal <- ical_parse_df(file = "mwu22@amherst.edu.ics") %>%
-      mutate(start_datetime = with_tz(start, tzone = "America/New_York")
-        , end_datetime = with_tz(end, tzone = "America/New_York")
-        , length_sec = end_datetime - start_datetime
-        , length_min = length_sec/60
-        , length_hrs = length_min/60
-        , date = floor_date(start_datetime, unit = "day")) 
-
-    mycal <- ogcal%>%
-      filter(!(summary %in% c("CTL Student Fellows Meeting", "WSJ Wednesday", 
-                              "End-of-year CTL Fellows Celebration")),
-             start > '2020-04-18 13:00:00') %>%
-      mutate("daysleft" = as.numeric(str_extract(summary, "[0-9]$")),
-             "timewasted" = as.numeric(case_when(grepl("\\d+,", summary) ~ str_extract(summary, "\\d+"),
-                                                TRUE ~ "20000000")),
-             "allottedtime" = as.numeric(length_min)
-             ) %>%
-      select(-uid, -description, -last.modified, -status)
-
-    str(mycal)
 
     ## 'data.frame':    117 obs. of  12 variables:
     ##  $ summary       : Factor w/ 87 levels " 216, Actual Essay, Desk, 313 Words, Quality 3, 2",..: 49 79 49 80 49 49 19 79 23 49 ...
@@ -366,8 +245,8 @@ is located) and update to your file name (with your email address).
        scale_fill_manual(values = pal)+
        transition_states(
         date,
-        transition_length = 1,
-        state_length = 2) +
+        transition_length = 2,
+        state_length = 1) +
        ease_aes('sine-in-out') +
       labs(title = "{closest_state}")
 
@@ -375,29 +254,36 @@ is located) and update to your file name (with your email address).
 
 ![](activities.gif)
 
-    activitiesgif <- ggplot(allactivities, aes(x=activity, fill = activity, y = hours)) + 
+    activitiesplot <- ggplot(allactivities, aes(x=activity, fill = activity, y = hours)) + 
        geom_bar(stat = "identity") +
        scale_fill_manual(values = pal) +
       labs(title = "What I have been doing in Quarantine",
            y = "total hours")
-    activitiesgif
+    activitiesplot
 
-![](index_files/figure-markdown_strict/unnamed-chunk-9-1.png) \# Data
-collection
+![](index_files/figure-markdown_strict/unnamed-chunk-9-1.png)
 
-I collected data by . . .
+1.  Create relevant summaries and visualizations, wrangling the data as
+    necessary along the way. (Note: MUCH, MUCH LESS wrangling is
+    expected here than in the Clearinghouse Challenge. The `ical`
+    package imports the calendar data into a nicely formatted dataframe,
+    with variables for summary of the event, time start, time end, and
+    description.) Wrangling should *not* take a substantial amount of
+    time.
 
-I can write a bulleted list like this:
+2.  What insights can you glean from how you’re spending your time?
+    Write a 3-5 paragraph report introducing your questions of interest,
+    explaining what you found, and reflecting on the answers to your
+    questions posed.
 
--   here’s the first thing I want to say
--   and I also want to say this
--   lastly, this
+3.  Finally, write a short reflection (1-2 paragraphs) on the process.
+    As someone who provides data: What expectations do you have when you
+    give your data (e.g. to Facebook, Google, MapMyRun, etc.)? As
+    someone who analyzes others’ data: What legal and ethical
+    responsibilities do you have?
 
-And a numbered list like this:
-
-1.  First thing
-2.  Second thing
-3.  Third thing
+Data collection
+===============
 
 Results
 =======
