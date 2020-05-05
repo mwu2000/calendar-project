@@ -1,12 +1,12 @@
 
 
-Diary of a Data Science Student: How to Avoid Lazy Dog Days
-===========================================================
+Diary of a Data Science Student: How to Avoid Dog Days
+======================================================
 
 Questions of Interest
 ---------------------
 
-1.  How am I spending my time in quarantine?
+1.  **Generally, how am I spending my time in quarantine?**
 
 2.  Recently, I have been thinking about how to maximize my
     productivity. In the past, I have observed that while I give myself
@@ -52,63 +52,91 @@ contains the variables related to my work sessions, and the more general
 activitydata, which contains all the activities that I have done in
 quarantine.
 
-    ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
+Here is a view of my activity data set:
 
-    ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
-    ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
-    ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
-    ## ✔ readr   1.3.1     ✔ forcats 0.4.0
+    head(allactivities)
 
-    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-    ## ✖ dplyr::filter() masks stats::filter()
-    ## ✖ dplyr::lag()    masks stats::lag()
+    ##   summary               start                 end      start_datetime
+    ## 1    Free 2020-04-18 21:00:00 2020-04-19 01:00:00 2020-04-18 21:00:00
+    ## 2  Violin 2020-04-18 20:00:00 2020-04-18 21:00:00 2020-04-18 20:00:00
+    ## 3    Free 2020-04-19 13:00:00 2020-04-19 15:00:00 2020-04-19 13:00:00
+    ## 4    Work 2020-04-19 15:00:00 2020-04-19 16:30:00 2020-04-19 15:00:00
+    ## 5    Free 2020-04-19 16:30:00 2020-04-19 17:00:00 2020-04-19 16:30:00
+    ## 6    Free 2020-04-19 21:30:00 2020-04-20 00:00:00 2020-04-19 21:30:00
+    ##          end_datetime length_sec length_min length_hrs       date daysleft
+    ## 1 2020-04-19 01:00:00 14400 secs   240 secs   4.0 secs 2020-04-18       NA
+    ## 2 2020-04-18 21:00:00  3600 secs    60 secs   1.0 secs 2020-04-18       NA
+    ## 3 2020-04-19 15:00:00  7200 secs   120 secs   2.0 secs 2020-04-19       NA
+    ## 4 2020-04-19 16:30:00  5400 secs    90 secs   1.5 secs 2020-04-19       NA
+    ## 5 2020-04-19 17:00:00  1800 secs    30 secs   0.5 secs 2020-04-19       NA
+    ## 6 2020-04-20 00:00:00  9000 secs   150 secs   2.5 secs 2020-04-19       NA
+    ##   timewasted allottedtime activity hours
+    ## 1      2e+07          240     Free   4.0
+    ## 2      2e+07           60   Violin   1.0
+    ## 3      2e+07          120     Free   2.0
+    ## 4      2e+07           90     Work   1.5
+    ## 5      2e+07           30     Free   0.5
+    ## 6      2e+07          150     Free   2.5
 
-    ## 
-    ## Attaching package: 'lubridate'
+Here is a view of my productivity data set:
 
-    ## The following object is masked from 'package:base':
-    ## 
-    ##     date
+    head(productivitydata)
 
-    ## 'data.frame':    117 obs. of  12 variables:
-    ##  $ summary       : Factor w/ 87 levels " 216, Actual Essay, Desk, 313 Words, Quality 3, 2",..: 49 79 49 80 49 49 19 79 23 49 ...
-    ##  $ start         : POSIXct, format: "2020-04-18 21:00:00" "2020-04-18 20:00:00" ...
-    ##  $ end           : POSIXct, format: "2020-04-19 01:00:00" "2020-04-18 21:00:00" ...
-    ##  $ start_datetime: POSIXct, format: "2020-04-18 21:00:00" "2020-04-18 20:00:00" ...
-    ##  $ end_datetime  : POSIXct, format: "2020-04-19 01:00:00" "2020-04-18 21:00:00" ...
-    ##  $ length_sec    : 'difftime' num  14400 3600 7200 5400 ...
-    ##   ..- attr(*, "units")= chr "secs"
-    ##  $ length_min    : 'difftime' num  240 60 120 90 ...
-    ##   ..- attr(*, "units")= chr "secs"
-    ##  $ length_hrs    : 'difftime' num  4 1 2 1.5 ...
-    ##   ..- attr(*, "units")= chr "secs"
-    ##  $ date          : POSIXct, format: "2020-04-18" "2020-04-18" ...
-    ##  $ daysleft      : num  NA NA NA NA NA NA NA NA NA NA ...
-    ##  $ timewasted    : num  2e+07 2e+07 2e+07 2e+07 2e+07 2e+07 2e+07 2e+07 2e+07 2e+07 ...
-    ##  $ allottedtime  : num  240 60 120 90 30 150 30 90 150 60 ...
+    ##                                        summary               start
+    ## 1 0, Actual Linear Algebra, Bed, 4 problems, 2 2020-04-19 01:00:00
+    ## 2                    60, YoutubeLinear, Bed, 5 2020-04-22 23:00:00
+    ## 3                   180, YoutubeEssay, Bed, 13 2020-04-23 00:00:00
+    ## 4                    60, YoutubeEssay, Desk, 3 2020-04-24 00:00:00
+    ## 5                     60, YoutubeEssay, Bed, 1 2020-04-26 02:00:00
+    ## 6                    120, YoutubeEssay, Bed, 8 2020-04-28 01:00:00
+    ##                   end      start_datetime        end_datetime length_sec
+    ## 1 2020-04-19 03:00:00 2020-04-19 01:00:00 2020-04-19 03:00:00  7200 secs
+    ## 2 2020-04-23 00:00:00 2020-04-22 23:00:00 2020-04-23 00:00:00  3600 secs
+    ## 3 2020-04-23 03:00:00 2020-04-23 00:00:00 2020-04-23 03:00:00 10800 secs
+    ## 4 2020-04-24 01:00:00 2020-04-24 00:00:00 2020-04-24 01:00:00  3600 secs
+    ## 5 2020-04-26 03:00:00 2020-04-26 02:00:00 2020-04-26 03:00:00  3600 secs
+    ## 6 2020-04-28 03:00:00 2020-04-28 01:00:00 2020-04-28 03:00:00  7200 secs
+    ##   length_min length_hrs       date daysleft timewasted allottedtime
+    ## 1   120 secs     2 secs 2020-04-19        2          0          120
+    ## 2    60 secs     1 secs 2020-04-22        5         60           60
+    ## 3   180 secs     3 secs 2020-04-23       13        180          180
+    ## 4    60 secs     1 secs 2020-04-24        3         60           60
+    ## 5    60 secs     1 secs 2020-04-26        1         60           60
+    ## 6   120 secs     2 secs 2020-04-28        8        120          120
+    ##   studyarea timewastedproportion worktype timeproductive
+    ## 1       Bed                    0     Math            120
+    ## 2       Bed                    1     Math              0
+    ## 3       Bed                    1  Writing              0
+    ## 4      Desk                    1  Writing              0
+    ## 5       Bed                    1  Writing              0
+    ## 6       Bed                    1  Writing              0
+    ##   timeworkedproportion
+    ## 1                    1
+    ## 2                    0
+    ## 3                    0
+    ## 4                    0
+    ## 5                    0
+    ## 6                    0
 
-    library(wesanderson)
+Results
+-------
+
+### Question 1: Overall, how am I spending my time?
+
+![](activities.gif)
+
+    activitiesplot <- ggplot(allactivities, aes(x=activity, fill = activity, y = hours)) + 
+       geom_bar(stat = "identity") +
+       scale_fill_manual(values = pal) +
+      labs(title = "What I have been doing in Quarantine",
+           y = "total hours")
+    activitiesplot
+
+![](index_files/figure-markdown_strict/unnamed-chunk-6-1.png)
+
     pal <- wes_palette("GrandBudapest2", n=4, type = "discrete")
 
     #Plot 1: violinplot of how much time is wasted in bed versus at the desk
-
-    productivitydata <- mycal %>% filter(timewasted != 20000000) %>%
-      mutate("studyarea" = case_when(grepl("Bed", summary, ignore.case = TRUE) ~  "Bed",
-                                         grepl("desk", summary, ignore.case = TRUE) ~  "Desk",
-                                         TRUE ~ "whatever"),
-                                         "timewastedproportion" = timewasted/allottedtime,
-                                         "worktype" = case_when(grepl("Linear", summary, ignore.case = TRUE) ~ "Math",
-                                                                grepl("Essay", summary, ignore.case = TRUE) ~ "Writing",
-                                                                TRUE ~ "whatever"))
-
-    #manually entering some missing values
-    productivitydata$daysleft[14] <- 0
-    productivitydata$daysleft[16] <- 4
-    productivitydata$daysleft[3] <- 13
-    productivitydata$daysleft[11] <- 14
-    productivitydata <- productivitydata %>% 
-      mutate("timeproductive" = (allottedtime - timewasted)) %>%
-      mutate("timeworkedproportion" = timeproductive/allottedtime)
 
     violinplot <- ggplot(productivitydata, aes(x = studyarea, y = timewasted, fill = studyarea)) +
       geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
@@ -128,7 +156,7 @@ quarantine.
 
     violinplot
 
-![](index_files/figure-markdown_strict/unnamed-chunk-2-1.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-7-1.png)
 
     #plot2, control for amount of time spent
     violinplot2 <- ggplot(productivitydata, aes(x = studyarea, y = timewastedproportion, fill = studyarea)) +
@@ -139,7 +167,7 @@ quarantine.
            y = "time wasted/Time Allotted")
     violinplot2
 
-![](index_files/figure-markdown_strict/unnamed-chunk-3-1.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-8-1.png)
 
     pal <- wes_palette("Moonrise3", n=4, type = "discrete")
     #plot3, math versus writing
@@ -151,7 +179,7 @@ quarantine.
            y = "minutes wasted")
     violinplot3
 
-![](index_files/figure-markdown_strict/unnamed-chunk-4-1.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-9-1.png)
 
     #plot4, math versus writing controlling for differences in allotted time
     violinplot4 <- ggplot(productivitydata, aes(x = worktype, y = timewastedproportion, fill = worktype)) +
@@ -162,7 +190,7 @@ quarantine.
            y = "minutes wasted")
     violinplot4
 
-![](index_files/figure-markdown_strict/unnamed-chunk-5-1.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-10-1.png)
 
     #filter out the outlier for math
     noutliers <- productivitydata %>% filter(summary != "60, YoutubeLinear, Bed, 5")
@@ -174,7 +202,7 @@ quarantine.
            y = "minutes wasted")
     violinplot5
 
-![](index_files/figure-markdown_strict/unnamed-chunk-5-2.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-10-2.png)
 
     #time productive by worktype
     pal <- wes_palette("Darjeeling1", n=4, type = "discrete")
@@ -186,7 +214,7 @@ quarantine.
            y = "minutes wasted")
     violinplot6
 
-![](index_files/figure-markdown_strict/unnamed-chunk-6-1.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-11-1.png)
 
     violinplot7 <- ggplot(noutliers, aes(x = worktype, y = timeworkedproportion, fill = worktype)) +
       geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
@@ -196,7 +224,7 @@ quarantine.
            y = "minutes wasted")
     violinplot7
 
-![](index_files/figure-markdown_strict/unnamed-chunk-6-2.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-11-2.png)
 
     #linegraph
     #manually enter missing day values
@@ -216,52 +244,11 @@ quarantine.
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
-![](index_files/figure-markdown_strict/unnamed-chunk-7-1.png)
+![](index_files/figure-markdown_strict/unnamed-chunk-12-1.png)
 
     cor(productivitydata$daysleft, productivitydata$timewastedproportion)
 
     ## [1] 0.4391658
-
-\#Question 1: What am I doing with my time overall?
-
-    allactivities <- mycal %>% 
-      filter(!(str_detect(summary, "Youtube") | str_detect(summary, "Actual")), 
-             summary != "120, Essay, Bed, 14") %>%
-      mutate("activity" = case_when(grepl("Linear", summary, ignore.case = TRUE) ~ "Math",
-                            grepl("Essay", summary, ignore.case = TRUE) ~ "Writing",
-                            (summary %in% c("Class", "Classes")) ~ "Class",
-                            (summary %in% c("Free", "Janet", "Allison", "Cleo")) ~ "Free",
-                            (summary %in% c("Call", "Meeting")) ~ "Meeting",
-                            summary == "Work" ~ "Work",
-                            summary == "Violin" ~ "Violin",
-                            TRUE ~ "Meeting"),
-             "hours" = as.numeric(length_hrs))
-
-    pal <- wes_palette("Moonrise3", n=7, type = "continuous")
-
-
-    activitiesgif <- ggplot(allactivities, aes(x=activity, fill = activity, y = hours)) + 
-       geom_bar(stat = "identity") +
-       scale_fill_manual(values = pal)+
-       transition_states(
-        date,
-        transition_length = 2,
-        state_length = 1) +
-       ease_aes('sine-in-out') +
-      labs(title = "{closest_state}")
-
-    anim_save("activities.gif", activitiesgif)
-
-![](activities.gif)
-
-    activitiesplot <- ggplot(allactivities, aes(x=activity, fill = activity, y = hours)) + 
-       geom_bar(stat = "identity") +
-       scale_fill_manual(values = pal) +
-      labs(title = "What I have been doing in Quarantine",
-           y = "total hours")
-    activitiesplot
-
-![](index_files/figure-markdown_strict/unnamed-chunk-9-1.png)
 
 1.  Create relevant summaries and visualizations, wrangling the data as
     necessary along the way. (Note: MUCH, MUCH LESS wrangling is

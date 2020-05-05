@@ -9,11 +9,11 @@ header-includes:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Diary of a Data Science Student: How to Avoid Lazy Dog Days
+# Diary of a Data Science Student: How to Avoid Dog Days
 
 ## Questions of Interest
 
-1. How am I spending my time in quarantine?
+1. **Generally, how am I spending my time in quarantine?**
 
 2. Recently, I have been thinking about how to maximize my productivity. In the past, I have observed that while I give myself a lot of time to work on an assignment, I do not make use of the entire chunk of time, especially if it is far away from my deadline. However, on days closer to a deadline, I always do more work. This has led me to wonder, **does the proportion of the allotted time that I am actually working increase as I get closer to a deadline?** Either way, **I want to map my work flow so I know when to give myself the most time when I feel motivated to work.** Maybe working closer to the deadline is just my natural work flow and in the future, I should plan for more work time closer to the deadline.
 
@@ -30,11 +30,12 @@ At the end of each work session, I looked at my search history on Google Chrome 
 
 After collecting my data, I downloaded my calendar as a .ics file and began wrangling. There are two datasets: productivitydata, which contains the variables related to my work sessions, and the more general activitydata, which contains all the activities that I have done in quarantine.
 
-```{r, echo=FALSE}
+```{r, include=FALSE}
 library(tidyverse)
 library(lubridate)
 library(ical)
 library(gganimate)
+library(wesanderson)
 
 ogcal <- ical_parse_df(file = "mwu22@amherst.edu.ics") %>%
   mutate(start_datetime = with_tz(start, tzone = "America/New_York")
@@ -56,15 +57,30 @@ mycal <- ogcal%>%
   select(-uid, -description, -last.modified, -status)
 
 str(mycal)
+
+# activities
+allactivities <- mycal %>% 
+  filter(!(str_detect(summary, "Youtube") | str_detect(summary, "Actual")), 
+         summary != "120, Essay, Bed, 14") %>%
+  mutate("activity" = case_when(grepl("Linear", summary, ignore.case = TRUE) ~ "Math",
+                        grepl("Essay", summary, ignore.case = TRUE) ~ "Writing",
+                        (summary %in% c("Class", "Classes")) ~ "Class",
+                        (summary %in% c("Free", "Janet", "Allison", "Cleo")) ~ "Free",
+                        (summary %in% c("Call", "Meeting")) ~ "Meeting",
+                        summary == "Work" ~ "Work",
+                        summary == "Violin" ~ "Violin",
+                        TRUE ~ "Meeting"),
+         "hours" = as.numeric(length_hrs))
 ```
 
-
+Here is a view of my activity data set:
 ```{r}
-library(wesanderson)
-pal <- wes_palette("GrandBudapest2", n=4, type = "discrete")
+head(allactivities)
+```
 
-#Plot 1: violinplot of how much time is wasted in bed versus at the desk
+Here is a view of my productivity data set:
 
+```{r, include = FALSE}
 productivitydata <- mycal %>% filter(timewasted != 20000000) %>%
   mutate("studyarea" = case_when(grepl("Bed", summary, ignore.case = TRUE) ~  "Bed",
                                      grepl("desk", summary, ignore.case = TRUE) ~  "Desk",
@@ -82,6 +98,51 @@ productivitydata$daysleft[11] <- 14
 productivitydata <- productivitydata %>% 
   mutate("timeproductive" = (allottedtime - timewasted)) %>%
   mutate("timeworkedproportion" = timeproductive/allottedtime)
+```
+
+```{r}
+head(productivitydata)
+```
+
+
+## Results
+
+### Question 1: Overall, how am I spending my time?
+```{r, message= FALSE, fig.show='animate', interval=1/10, include = FALSE}
+
+pal <- wes_palette("Moonrise3", n=7, type = "continuous")
+
+
+activitiesgif <- ggplot(allactivities, aes(x=activity, fill = activity, y = hours)) + 
+   geom_bar(stat = "identity") +
+   scale_fill_manual(values = pal)+
+   transition_states(
+    date,
+    transition_length = 2,
+    state_length = 1) +
+   ease_aes('sine-in-out') +
+  labs(title = "{closest_state}")
+
+anim_save("activities.gif", activitiesgif)
+```
+
+
+![](activities.gif)
+
+```{r}
+activitiesplot <- ggplot(allactivities, aes(x=activity, fill = activity, y = hours)) + 
+   geom_bar(stat = "identity") +
+   scale_fill_manual(values = pal) +
+  labs(title = "What I have been doing in Quarantine",
+       y = "total hours")
+activitiesplot
+```
+
+```{r}
+
+pal <- wes_palette("GrandBudapest2", n=4, type = "discrete")
+
+#Plot 1: violinplot of how much time is wasted in bed versus at the desk
 
 violinplot <- ggplot(productivitydata, aes(x = studyarea, y = timewasted, fill = studyarea)) +
   geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) + #geom_count()
@@ -177,49 +238,6 @@ linegraph1
 cor(productivitydata$daysleft, productivitydata$timewastedproportion)
 ```
 
-#Question 1: What am I doing with my time overall?
-```{r, message= FALSE, fig.show='animate', interval=1/10}
-
-allactivities <- mycal %>% 
-  filter(!(str_detect(summary, "Youtube") | str_detect(summary, "Actual")), 
-         summary != "120, Essay, Bed, 14") %>%
-  mutate("activity" = case_when(grepl("Linear", summary, ignore.case = TRUE) ~ "Math",
-                        grepl("Essay", summary, ignore.case = TRUE) ~ "Writing",
-                        (summary %in% c("Class", "Classes")) ~ "Class",
-                        (summary %in% c("Free", "Janet", "Allison", "Cleo")) ~ "Free",
-                        (summary %in% c("Call", "Meeting")) ~ "Meeting",
-                        summary == "Work" ~ "Work",
-                        summary == "Violin" ~ "Violin",
-                        TRUE ~ "Meeting"),
-         "hours" = as.numeric(length_hrs))
-
-pal <- wes_palette("Moonrise3", n=7, type = "continuous")
-
-
-activitiesgif <- ggplot(allactivities, aes(x=activity, fill = activity, y = hours)) + 
-   geom_bar(stat = "identity") +
-   scale_fill_manual(values = pal)+
-   transition_states(
-    date,
-    transition_length = 2,
-    state_length = 1) +
-   ease_aes('sine-in-out') +
-  labs(title = "{closest_state}")
-
-anim_save("activities.gif", activitiesgif)
-```
-
-
-![](activities.gif)
-
-```{r}
-activitiesplot <- ggplot(allactivities, aes(x=activity, fill = activity, y = hours)) + 
-   geom_bar(stat = "identity") +
-   scale_fill_manual(values = pal) +
-  labs(title = "What I have been doing in Quarantine",
-       y = "total hours")
-activitiesplot
-```
 
 5. Create relevant summaries and visualizations, wrangling the data as necessary along the way.  (Note: MUCH, MUCH LESS wrangling is expected here than in the Clearinghouse Challenge.  The `ical` package imports the calendar data into a nicely formatted dataframe, with variables for summary of the event, time start, time end, and description.)  Wrangling should *not* take a substantial amount of time. 
 
