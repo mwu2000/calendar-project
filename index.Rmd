@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Data Collection
 
-I collected data by logging in my daily schedule into Google Calendar. Every morning for two weeks, I logged in my day's planned activities and stuck to the schedule (for the most part). So, each day I planned set times to do my writing or math assignments or sometimes both. In the dataset, the *allottedtime* variable tracks the amount of time I gave myself each day. I also logged what I was doing in the rest of the day.
+I collected data by logging in my daily schedule into Google Calendar. Every morning for 13 days, I logged in my day's planned activities and stuck to the schedule (for the most part). So, each day I planned set times to do my writing or math assignments or sometimes both. In the dataset, the *allottedtime* variable tracks the amount of time I gave myself each day. I also logged what I was doing in the rest of the day.
 
 At the end of each work session, I looked at my search history on Google Chrome and calculated the total amount of time that I was on other sites not related to my work, such as Youtube or social media. I put this into my google calendar as part of the summary. When I'm working, the majority of the time that I get distracted is from the Internet, so my search history was an accurate reflection of all the time that I wasted. The *timewasted* variable tracks the amount of time per work session that was spent off task. I also kept track of where I was working (*studyarea*) and the assignment type (*worktype*).
 
@@ -100,7 +100,7 @@ productivitydata <- productivitydata %>%
   mutate("timeworkedproportion" = timeproductive/allottedtime)
 ```
 
-```{r, fig.height = 2.5, fig.width=5}
+```{r}
 head(productivitydata)
 ```
 
@@ -109,7 +109,8 @@ head(productivitydata)
 
 ### Question 1: Overall, how am I spending my time?
 
-The graph below 
+The graph below shows my daily activity breakdown over a two week period. There is a lot variation in my daily activites! Every day looks a little bit different.
+
 ```{r, message= FALSE, fig.show='animate', interval=1/10, include = FALSE}
 
 pal <- wes_palette("Moonrise3", n=7, type = "continuous")
@@ -131,7 +132,13 @@ anim_save("activities.gif", activitiesgif)
 
 ![](activities.gif)
 
-```{r}
+This second plot depicts the total hours that I spent on each activity during the two week period. I did not keep track of the time that I was sleeping or waking up, which explains why there are less hours than there are in two weeks.
+
+I have a lot of free time! By a wide margin, most of the time is going towards free time. This makes sense, because I have had a lot of free time. Because I categorized any time spent eating, exercising, talking with my friends, and watching films/reading as free time, there are many different activities that add to total that is just shy of 80 hours.
+
+At first glance, it doesn't look like I'm spending a lot of time on school. However, three separate categories are all school work time--if I added up math, writing, and work, this would be about 64 hours of work time. (The *work* category is for miscellaneous schoolwork that I am not tracking for my productivity analysis).
+
+```{r, echo = FALSE}
 activitiesplot <- ggplot(allactivities, aes(x=activity, fill = activity, y = hours)) + 
    geom_bar(stat = "identity") +
    scale_fill_manual(values = pal) +
@@ -140,7 +147,13 @@ activitiesplot <- ggplot(allactivities, aes(x=activity, fill = activity, y = hou
 activitiesplot
 ```
 
-```{r}
+### Questions 2 and 3
+
+While I spent 24 hours writing and 15 hours doing math problems, how much of that time was actually spent working? Often, I found myself sitting down to begin a work session, only to fall down a self care Youtube rabbit hole after ten minutes of focusing.
+
+First, I wanted to explore whether the place that I worked had any effect on my productivity level.
+
+```{r, echo = FALSE}
 
 pal <- wes_palette("GrandBudapest2", n=4, type = "discrete")
 
@@ -154,6 +167,7 @@ violinplot <- ggplot(productivitydata, aes(x = studyarea, y = timewasted, fill =
        y = "minutes wasted")
 violinplot
 ```
+
 
 ```{r}
 #plot2, control for amount of time spent
@@ -248,15 +262,3 @@ cor(productivitydata$daysleft, productivitydata$timewastedproportion)
 7. Finally, write a short reflection (1-2 paragraphs) on the process.  As someone who provides data: What expectations do you have when you give your data (e.g. to Facebook, Google, MapMyRun, etc.)?  As someone who analyzes others' data: What legal and ethical responsibilities do you have?
 
 
-# Data collection
-
-
-
-# Results
-
-And here are my results . . .
-
-```{r}
-# intersperse relevant figures and text
-
-```
